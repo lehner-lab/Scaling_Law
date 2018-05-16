@@ -1,0 +1,12 @@
+GSM1552789	SF3B1_mutated_sample_1
+GSM1552790	SF3B1_mutated_sample_2
+GSM1552791	SF3B1_mutated_sample_3
+GSM1552792	SF3B1_mutated_sample_4
+GSM1552793	SF3B1_mutated_sample_5
+GSM1552794	SF3B1_mutated_sample_6
+GSM1552795	SF3B1_mutated_sample_7
+GSM1552796	SF3B1_mutated_sample_8
+GSM1552797	SF3B1_wildtype_sample_1
+GSM1552798	SF3B1_wildtype_sample_2
+GSM1552799	SF3B1_wildtype_sample_3
+GSM1552800	SF3B1_wildtype_sample_4
