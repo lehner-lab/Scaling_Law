@@ -8,7 +8,7 @@ To compare exon inclusion in two different cell lines, we chose two cell lines r
 
 The easiest way to download GEO data is to use the [SRA toolkit](https://www.ncbi.nlm.nih.gov/sra/docs/toolkitsoft/). First, we will build a table linking the GSM IDs we have to the SRA IDs required by the SRA toolkit:
 
-~~~bash
+```bash
 # Make SRR-to-GSM table
 wget ftp://ftp.ncbi.nlm.nih.gov/sra/reports/Metadata/SRA_Accessions.tab
 grep ^SRR SRA_Accessions.tab | grep GSM | awk 'BEGIN {FS="\t"; print "GSM" FS "SRR"}; {print $10 FS $1}' > GSM_SRR.txt
@@ -16,7 +16,7 @@ rm SRA_Accessions.tab
 ```
 Once we have this table, we can use it to extract the sample SRA IDs and prefetch the files:
 
-~~~bash
+```bash
 # prefetch SRR files from GEO
 while IFS=$'\t' read -r -a myArray
 do
@@ -26,7 +26,7 @@ done < Sample_IDs.txt
 ```
 And now you need to extract the fastq files. I extracted them to a folder called `fastq_files` in the current working directory, but feel free to replace this with something else. By default, the files prefetched in the previous step are stored in `~/ncbi/public/sra/`, but if you saved them elsewhere, then this directory should also be changed in the code below:
 
-~~~bash
+```bash
 # extract fastq files
 while IFS=$'\t' read -r -a myArray
 do
@@ -36,7 +36,7 @@ done < Sample_IDs.txt
 ```
 Finally, you can change the name of the fastq files to something more meaningful such as the sample name:
 
-~~~bash
+```bash
 # rename files
 while IFS=$'\t' read -r -a myArray
 do
@@ -45,11 +45,12 @@ do
 	mv fastq_files/${SRR_ID}_2.fastq fastq_files/${myArray[1]}_2.fastq
 done < Sample_IDs.txt
 ```
+
 ## Process files with VAST-TOOLS
 
 To process the raw sequencing files and extract genomewide exon inclusion levels (as well as information about other alternative splicing events), I used [VAST-TOOLS](https://github.com/vastgroup/vast-tools). The first step in the VAST-TOOLS pipeline is the alignment. This can take quite a bit of time, which is why I recommend using multiple cores if possible. The second step is `combine` and should be fairly quick.
 
-~~~bash
+```bash
 # run vast-tools
 while IFS=$'\t' read -r -a myArray
 do
@@ -77,7 +78,7 @@ done < Sample_IDs.txt
 
 The output of `vast-tools combine` has [many columns](https://github.com/vastgroup/vast-tools#combine-output-format). I removed some of them which I was not interested in, and I also changed the quality scores column. If the quality of an event was `LOW` or better, I set the event as a `Pass`. Otherwise, I called it a `Fail`.
 
-~~~bash
+```bash
 # for each sample, remove columns I don't want AND say whether quality is overall good ('Pass') or bad ('Fail')
 for i in `seq 1 4`; do
 	# save sample name as a variable
@@ -101,7 +102,7 @@ done
 ```
 After trimming (removing unwanted columns) the files and modifying the quality score column, I merged all the tables into one:
 
-~~~bash
+```bash
 # take the location of all the trimmed files
 for i in `seq 1 4`; do
 	SAMPLE=$(head -n $i Sample_IDs.txt | tail -n 1)
@@ -115,6 +116,6 @@ paste -d "\t" ${SAMPLES_ARRAY[@]} | cut -f 1,2,3,4,5,9,10,14,15,19,20 > Huvec_He
 Finally, since I was only interested in alternative exon events, I removed all other events for downstream analyses:
 
 
-~~~bash
+```bash
 awk 'NR==1 {print}; $2 ~ /^HsaEX/ {print $0}' Huvec_HepG2_TABLE.txt >> Huvec_HepG2_TABLE_EXONS.txt
-~~~
+```
