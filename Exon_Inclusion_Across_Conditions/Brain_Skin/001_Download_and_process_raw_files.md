@@ -82,18 +82,7 @@ PSI.Estimates <- quantifySplicing(annotation = annotation,
 ```
 **Warning**: because the junction read counts file is so big (~9Gb), the splicing quantification step can take a long time and your R session might run out of RAM. If that occurs, the easiest workaround is to split the junction file into 5-10 different files and process each of them separately, and merge the final processed files later.
 
-`PSI.Estimates` is an R data frame where columns represent different samples and rows represent different splicing events. I removed any splicing events (rows) which could not be quantified even once across all the samples:
 
-```r
-# Look at mean NA value per splicing event
-NAs.Per.Splicing.Event <- apply(PSI.Estimates,
-                                1,
-                                function(x) mean(is.na(x)))
-
-# select only events where I don't have any NAs
-No.NAs <- which(NAs.Per.Splicing.Event == 0)
-PSI.Estimates <- PSI.Estimates[No.NAs,]
-```
 
 ## Subset annotations data frame and save
 
