@@ -13,8 +13,7 @@ The easiest way to download GEO data is to use the [SRA toolkit](https://www.ncb
 wget ftp://ftp.ncbi.nlm.nih.gov/sra/reports/Metadata/SRA_Accessions.tab
 grep ^SRR SRA_Accessions.tab | grep GSM | awk 'BEGIN {FS="\t"; print "GSM" FS "SRR"}; {print $10 FS $1}' > GSM_SRR.txt
 rm SRA_Accessions.tab
-~~~
-
+```
 Once we have this table, we can use it to extract the sample SRA IDs and prefetch the files:
 
 ~~~bash
@@ -24,8 +23,7 @@ do
 	SRR_ID=$(grep ${myArray[0]} GSM_SRR.txt | cut -f 2)
 	prefetch -v $SRR_ID
 done < Sample_IDs.txt
-~~~
-
+```
 And now you need to extract the fastq files. I extracted them to a folder called `fastq_files` in the current working directory, but feel free to replace this with something else. By default, the files prefetched in the previous step are stored in `~/ncbi/public/sra/`, but if you saved them elsewhere, then this directory should also be changed in the code below:
 
 ~~~bash
@@ -35,8 +33,7 @@ do
 	SRR_ID=$(grep ${myArray[0]} GSM_SRR.txt | cut -f 2)
 	fastq-dump --outdir fastq_files/ --split-files ~/ncbi/public/sra/${SRR_ID}.sra
 done < Sample_IDs.txt
-~~~
-
+```
 Finally, you can change the name of the fastq files to something more meaningful such as the sample name:
 
 ~~~bash
@@ -47,8 +44,7 @@ do
 	mv fastq_files/${SRR_ID}_1.fastq fastq_files/${myArray[1]}_1.fastq
 	mv fastq_files/${SRR_ID}_2.fastq fastq_files/${myArray[1]}_2.fastq
 done < Sample_IDs.txt
-~~~
-
+```
 ## Process files with VAST-TOOLS
 
 To process the raw sequencing files and extract genomewide exon inclusion levels (as well as information about other alternative splicing events), I used [VAST-TOOLS](https://github.com/vastgroup/vast-tools). The first step in the VAST-TOOLS pipeline is the alignment. This can take quite a bit of time, which is why I recommend using multiple cores if possible. The second step is `combine` and should be fairly quick.
@@ -73,8 +69,7 @@ do
 	# move back up before creating a directory for the next sample
 	cd ..
 done < Sample_IDs.txt
-~~~
-
+```
 
 
 
@@ -103,8 +98,7 @@ for i in `seq 1 4`; do
 	# move back up before working on the next sample
 	cd ..
 done
-~~~
-
+```
 After trimming (removing unwanted columns) the files and modifying the quality score column, I merged all the tables into one:
 
 ~~~bash
@@ -117,8 +111,7 @@ done
 
 # and paste them together
 paste -d "\t" ${SAMPLES_ARRAY[@]} | cut -f 1,2,3,4,5,9,10,14,15,19,20 > Huvec_HepG2_TABLE.txt
-~~~
-
+```
 Finally, since I was only interested in alternative exon events, I removed all other events for downstream analyses:
 
 
