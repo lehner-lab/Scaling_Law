@@ -1,12 +1,12 @@
-# HepG2 vs Huvek
+# Raw sequencing files
 
 
 To compare exon inclusion in two different cell lines, we chose two cell lines representing different lineages (HepG2 and Huvek) from the [ENCODE Project Common Cell Types](https://www.genome.gov/26524238/encode-project-common-cell-types/). Transcriptomic RNA-seq data from these cell lines is stored in GEO. To run the code written in this document, you'll also need the 
-`Samples_ID.txt` file found in this folder.
+`Samples_ID.txt` file found in the `Data` folder.
 
 ## Download files
 
-The easiest way to download GEO data is to use the [SRA toolkit](https://www.ncbi.nlm.nih.gov/sra/docs/toolkitsoft/). First, we will build a table linking the GSM IDs we have to the SRA IDs required by the SRA toolkit:
+The easiest way to download GEO data is to use the [SRA toolkit](https://www.ncbi.nlm.nih.gov/sra/docs/toolkitsoft/). First, I built a table linking the GSM IDs I had to the SRA IDs required by the SRA toolkit:
 
 ```bash
 # Make SRR-to-GSM table
@@ -14,7 +14,7 @@ wget ftp://ftp.ncbi.nlm.nih.gov/sra/reports/Metadata/SRA_Accessions.tab
 grep ^SRR SRA_Accessions.tab | grep GSM | awk 'BEGIN {FS="\t"; print "GSM" FS "SRR"}; {print $10 FS $1}' > GSM_SRR.txt
 rm SRA_Accessions.tab
 ```
-Once we have this table, we can use it to extract the sample SRA IDs and prefetch the files:
+With this table, I extracted the sample SRA IDs and prefetched the files:
 
 ```bash
 # prefetch SRR files from GEO
@@ -22,9 +22,9 @@ while IFS=$'\t' read -r -a myArray
 do
 	SRR_ID=$(grep ${myArray[0]} GSM_SRR.txt | cut -f 2)
 	prefetch -v $SRR_ID
-done < Sample_IDs.txt
+done < Data/Sample_IDs.txt
 ```
-And now you need to extract the fastq files. I extracted them to a folder called `fastq_files` in the current working directory, but feel free to replace this with something else. By default, the files prefetched in the previous step are stored in `~/ncbi/public/sra/`, but if you saved them elsewhere, then this directory should also be changed in the code below:
+The next step involves extracting the fastq files. I extracted them to a folder called `fastq_files` in the current working directory, but feel free to replace this with something else. By default, the files prefetched in the previous step are stored in `~/ncbi/public/sra/`, but if you saved them elsewhere, then this directory should also be changed in the code below:
 
 ```bash
 # extract fastq files
@@ -32,9 +32,9 @@ while IFS=$'\t' read -r -a myArray
 do
 	SRR_ID=$(grep ${myArray[0]} GSM_SRR.txt | cut -f 2)
 	fastq-dump --outdir fastq_files/ --split-files ~/ncbi/public/sra/${SRR_ID}.sra
-done < Sample_IDs.txt
+done < Data/Sample_IDs.txt
 ```
-Finally, you can change the name of the fastq files to something more meaningful such as the sample name:
+Finally, I changed the name of the fastq files to the sample name since that is more meaningful:
 
 ```bash
 # rename files
@@ -43,7 +43,7 @@ do
 	SRR_ID=$(grep ${myArray[0]} GSM_SRR.txt | cut -f 2)
 	mv fastq_files/${SRR_ID}_1.fastq fastq_files/${myArray[1]}_1.fastq
 	mv fastq_files/${SRR_ID}_2.fastq fastq_files/${myArray[1]}_2.fastq
-done < Sample_IDs.txt
+done < Data/Sample_IDs.txt
 ```
 
 ## Process files with VAST-TOOLS
@@ -69,7 +69,7 @@ do
 	
 	# move back up before creating a directory for the next sample
 	cd ..
-done < Sample_IDs.txt
+done < Data/Sample_IDs.txt
 ```
 
 
@@ -82,7 +82,7 @@ The output of `vast-tools combine` has [many columns](https://github.com/vastgro
 # for each sample, remove columns I don't want AND say whether quality is overall good ('Pass') or bad ('Fail')
 for i in `seq 1 4`; do
 	# save sample name as a variable
-	SAMPLE=$(head -n $i Sample_IDs.txt | tail -n 1)
+	SAMPLE=$(head -n $i Data/Sample_IDs.txt | tail -n 1)
 	
 	# move into this sample's directory
 	cd $SAMPLE
@@ -115,7 +115,7 @@ paste -d "\t" ${SAMPLES_ARRAY[@]} | cut -f 1,2,3,4,5,9,10,14,15,19,20 > Huvec_He
 ```
 Finally, since I was only interested in alternative exon events, I removed all other events for downstream analyses:
 
-
 ```bash
-awk 'NR==1 {print}; $2 ~ /^HsaEX/ {print $0}' Huvec_HepG2_TABLE.txt >> Huvec_HepG2_TABLE_EXONS.txt
+awk 'NR==1 {print}; $2 ~ /^HsaEX/ {print $0}' Huvec_HepG2_TABLE.txt >> Data/Huvec_HepG2_TABLE_EXONS.txt
 ```
+The `Huvec_HepG2_TABLE_EXONS.txt` file produced is provided in the `Data` folder.
