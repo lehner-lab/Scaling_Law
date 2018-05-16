@@ -82,7 +82,7 @@ The output of `vast-tools combine` has [many columns](https://github.com/vastgro
 # for each sample, remove columns I don't want AND say whether quality is overall good ('Pass') or bad ('Fail')
 for i in `seq 1 4`; do
 	# save sample name as a variable
-	SAMPLE=$(head -n $i Data/Sample_IDs.txt | tail -n 1)
+	SAMPLE=$(head -n $i Data/Sample_IDs.txt | tail -n 1 | cut -f 2)
 	
 	# move into this sample's directory
 	cd $SAMPLE
@@ -105,7 +105,7 @@ After trimming (removing unwanted columns) the files and modifying the quality s
 ```bash
 # take the location of all the trimmed files
 for i in `seq 1 4`; do
-	SAMPLE=$(head -n $i Sample_IDs.txt | tail -n 1)
+	SAMPLE=$(head -n $i Sample_IDs.txt | tail -n 1 | cut -f 2)
 	SAMPLE_PATH=${SAMPLE}/INCLUSION_LEVELS_TRIMMED.tab
 	SAMPLES_ARRAY[i]=${SAMPLE_PATH}
 done
