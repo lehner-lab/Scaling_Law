@@ -1,7 +1,9 @@
 # Raw files
 
 
-To compare exon inclusion in two different tissues, we chose the two tissues (Brain and Skin) with the highest number of samples in the [GTEx Project](https://www.gtexportal.org/home/). 
+To compare exon inclusion in two different tissues, we chose the two tissues (Brain and Skin) with the highest number of samples in the [GTEx Project](https://www.gtexportal.org/home/).
+
+Please note that the files produced by this document are very big (> 700Mb) and so have not been included in the repository. These instructions should be enough to reproduce the missing files, but please feel free to contact me if you are having trouble with this.
 
 ## Download files
 
