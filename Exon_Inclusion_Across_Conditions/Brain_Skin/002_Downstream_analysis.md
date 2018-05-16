@@ -111,7 +111,7 @@ Exons.Up$Group <- factor(Exons.Up$Group, levels = 1:10)
 Exons.Down$Group <- findInterval(x = Exons.Down $Brain,
                                  vec = seq(0,1,0.1),
                                  rightmost.closed = T)
-Exons.Down $Group <- factor(Exons.Down $Group, levels = 1:10)
+Exons.Down$Group <- factor(Exons.Down$Group, levels = 1:10)
 
 ```
 
