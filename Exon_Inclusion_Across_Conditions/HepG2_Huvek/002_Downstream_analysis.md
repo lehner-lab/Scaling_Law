@@ -169,7 +169,7 @@ ggplot(data = Exons.Down, mapping = aes(x = Group,
               position=position_jitter(width=0.25,
                                        height=0),
               alpha=0.1,
-              size=0.1,
+              size=0.5,
               show.legend=FALSE) +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
