@@ -1,0 +1,4 @@
+4C_Embryo2_Cell1	4C_Embryo2
+4C_Embryo2_Cell2	4C_Embryo2
+4C_Embryo2_Cell3	4C_Embryo2
+4C_Embryo2_Cell4	4C_Embryo2

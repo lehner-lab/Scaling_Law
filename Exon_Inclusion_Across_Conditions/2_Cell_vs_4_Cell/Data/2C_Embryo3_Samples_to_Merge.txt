@@ -1,0 +1,2 @@
+2C_Embryo3_Cell1	2C_Embryo3
+2C_Embryo3_Cell2	2C_Embryo3
