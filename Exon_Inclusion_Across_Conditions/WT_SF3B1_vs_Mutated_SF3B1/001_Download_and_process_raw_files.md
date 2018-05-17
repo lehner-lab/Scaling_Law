@@ -79,7 +79,7 @@ The output of `vast-tools combine` has [many columns](https://github.com/vastgro
 
 ```bash
 # for each sample, remove columns I don't want AND say whether quality is overall good ('Pass') or bad ('Fail')
-for i in `seq 1 4`; do
+for i in `seq 1 12`; do
 	# save sample name as a variable
 	SAMPLE=$(head -n $i Data/Sample_IDs.txt | tail -n 1 | cut -f 2)
 	
