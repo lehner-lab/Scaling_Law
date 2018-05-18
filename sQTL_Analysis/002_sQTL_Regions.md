@@ -266,3 +266,64 @@ Finally, create a new BED file with the new, updated coordinates:
 head -n 1 Exonic_Regions.bed > Gene_Regions.bed
 paste <(tail -n +2 Exonic_Regions.bed) <(printf "%s\n" "${all_starts[@]}") <(printf "%s\n" "${all_ends[@]}") | awk 'BEGIN {FS="\t"} {print $1 FS $6 FS $7 FS $4 FS $5}' >> Gene_Regions.bed
 ```
+
+## Prepare datasets for sQTL tests (next document)
+
+First, I read `IDs_Tissues_IschaemicTime.txt` into R and tweaked it a little bit to contain all the information I will need downstream:
+
+```r
+library(data.table)
+
+# load table with sample information
+GTEX.Dataset <- fread(input = "IDs_Tissues_IschaemicTime.txt")
+
+# create a new column with the subject ID
+GTEX.Dataset $SUBJID <- sapply(as.character(All.Samples$SAMPID),
+                               function(x){
+                                 paste(strsplit(x,"\\.")[[1]][1:2],
+                                       sep = "-",
+                                       collapse = "-")
+                               })
+
+# factorise subject ID and tissue
+GTEX.Dataset$SUBJID <- as.character(GTEX.Dataset$SUBJID) # subject ID
+GTEX.Dataset$SMTS <- as.factor(GTEX.Dataset$SMTS) # tissue
+
+# convert ischaemic time to numeric
+GTEX.Dataset$SMTSISCH <- sapply(GTEX.Dataset$SMTSISCH,
+                                function(this.string){
+                                  gsub(pattern = "^\\.",
+                                       replacement = "-",
+                                       x = this.string,
+                                       perl = T)
+                                })
+GTEX.Dataset$SMTSISCH <- as.numeric(GTEX.Dataset$SMTSISCH)
+```
+Next, I loaded `PSI.Estimates`. This is a very big file containing information from many exon splicing events I am not interested in. Therefore, I used `Gene_Regions.bed` to reduce `PSI.Estimates` such that it only includes exons I wanted to analyse:
+
+```r
+# load data
+Splicing.Events <- fread(input = "Gene_Regions.bed")
+load("PSI.Estimates.RData")
+
+# subset the massive dataframe to only have events we're interested in
+PSI.Estimates <- PSI.Estimates[as.character(Splicing.Events$ID),]
+
+# also subset 
+IDs.To.Keep <- intersect(as.character(colnames(Merged.PSI)), as.character(GTEX.Dataset$SAMPID))
+PSI.Estimates <- PSI.Estimates[,IDs.To.Keep]
+```
+Finally, subset `GTEX.Dataset` so it includes the same samples as `PSI.Estimates`:
+
+```r
+rownames(GTEX.Dataset) <- as.character(GTEX.Dataset$SAMPID)
+GTEX.Dataset <- GTEX.Dataset[SAMPID %in% IDs.To.Keep]
+```
+And save objects:
+
+```r
+save(GTEX.Dataset,
+     PSI.Estimates,
+     file="Filtered.Annotations.PSI.Estimates.RData")
+
+```
