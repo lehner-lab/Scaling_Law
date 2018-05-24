@@ -45,6 +45,18 @@ rm genotypes.MAF01.vcf.gz
 mv NEW.genotypes.MAF01.vcf.gz genotypes.MAF01.vcf.gz
 ```
 
+## Remove variants in linkage disequilibrium
+
+Many variants may co-occur and be associated with the exact same phenotypic changes. In this case, they are all effectively the same QTL. To remove these redundant variants, I used `bcftools prune` with an R2 limit of 0.6 within a window of 100kb (default window size).
+
+```bash
+# prune VCF file
+bcftools +prune --max-LD 0.6 genotypes.MAF01.vcf.gz --output-type z --output Data/Pruned.genotypes.MAF01.vcf.gz 
+
+# rename
+rm genotypes.MAF01.vcf.gz
+mv Pruned.genotypes.MAF01.vcf.gz genotypes.MAF01.vcf.gz
+```
 
 ## Subjects in both the junctions and genotype files
 
