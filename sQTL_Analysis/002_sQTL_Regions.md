@@ -3,303 +3,215 @@
 
 In theory, a DNA variant could potentially be an sQTL for an exon anywhere else in the genome (even in a different chromosome). However, to limit the computational burden of the analysis, I only considered variants within the same gene as the exon of interest.
 
-In this document I:
+In this document I determine the genomic regions I want to focus my analysis on and prepare the datasets for the sQTL testing that will come later.
 
-* identify suitable exons for the sQTL analysis
-* determine the genomic regions I want to focus my analysis on
 
-## Download genome annotations
+## Download files
 
-In addition to the files downloaded in the previous document, I will also use the GENCODE annotations for the human genome release 19 (GRCh37.p13) (`gencode.v19.annotation.gff3.gz`, which can be downloaded from [this page](https://www.gencodegenes.org/releases/19.html)).
+I downloaded 2 files from the GTEx Project [downloads page](https://www.gtexportal.org/gtex_analysis_v7/datasets). One is freely accessible to any user who has a GTEx login account:
 
-## Variable exons
+* **_Sample annotations file_**: `GTEx_v7_Annotations_SampleAttributesDS.txt`
 
-To see whether the behaviour of sQTL's also scales depending on the starting PSI of the exon they affect, we need to find exons with very different levels of inclusion in different tissues.
+The other file is protected and you'll need to apply for access through [dbgap](https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/study.cgi?study_id=phs000424.v7.p2):
 
-I first built a table linking each GTEx sample to the tissue it comes from (as well as the ischaemic time of the sample, but this is for a downstream analysis later on). The following bash command does this:
+* **_Subject annotations file_**: `phs000424.v7.pht002742.v7.p2.c1.GTEx_Subject_Phenotypes.GRU.txt`
 
-```bash
-cut -f1,6,9 GTEx_v7_Annotations_SampleAttributesDS.txt | sed s/-/\./g > IDs_Tissues_IschaemicTime.txt
-```
-I loaded `PSI.Estimates.RData` into R:
+I will also use the GENCODE annotations for the human genome release 19 (GRCh37.p13), which can be downloaded from [this page](https://www.gencodegenes.org/releases/19.html)):
+
+* **_Human genome annotations file_**: `gencode.v19.annotation.gff3.gz`
+
+## Obtain list of genes
+
+Since I wanted to restrict the sQTL search to the gene where the alternative exon is located, I first extracted the IDs of the relevant genes. I loaded `PSI.Estimates.RData` into R:
 
 ```r
 load("PSI.Estimates.RData")
 ```
-
-As well as the ID &rarr; Tissue table we just built:
-
-```r
-# build a dictionary to match GTEx IDs to tissue of origin
-Dictionary <- read.table(file = "IDs_Tissues_IschaemicTime.txt",
-                         header = TRUE,
-                         sep = "\t")
-                         
-# only need the first 2 columns
-Dictionary <- Dictionary[,1:2]
-
-# rename columns, rows and convert from factor to character
-colnames(Dictionary) <- c("ID", "Tissue")
-Dictionary$ID <- as.character(Dictionary$ID)
-Dictionary$Tissue <- as.character(Dictionary$Tissue)
-rownames(Dictionary) <- Dictionary$ID
-```
-Next, I split the `PSI.Estimates` data frame into many data frames according to the sample tissue:
-
-Vector with sample IDs from PSI object, and another with corresponding vectors
-
-```r
-# build a vector with the IDs of all samples in PSI.Estimates
-IDs <- as.character(colnames(PSI.Estimates))
-IDs <- IDs[2:length(IDs)]
-
-# build a vector with the tissue of each sample in PSI.Estimates
-Tissues <- Dictionary[IDs, "Tissue"]
-
-# create an empty list with one element for each tissue
-Split.PSI.Tables <- vector(mode = "list",
-                           length = length(unique(Tissues)))
-names(Split.PSI.Tables) <- unique(Tissues)
-
-# fill the empty list with Build a PSI.Estimates table for each tissue
-for (Each.Tissue in unique(Tissues)) {
-  Columns <- which(Tissues == Each.Tissue)
-  Split.PSI.Tables[[Each.Tissue]] <- PSI.Estimates[,c(1,(Columns+1))]
-}
-
-```
-For each exon skipping event, calculate the median PSI in each tissue:
-
-```r
-# estimate median PSI per tissue
-Median.PSIs.Per.Tissue <- lapply(X = Split.PSI.Tables,
-                                 FUN = function(x){
-                                   apply(X = x[,2:ncol(x)],
-                                         MARGIN = 1,
-                                         FUN = median,
-                                         na.rm = TRUE)
-                                   })
-
-# matrix with all splicing events (rows) against tissue (columns)
-Medians.Matrix <- do.call(cbind, Median.PSIs.Per.Tissue)
-rownames(Medians.Matrix) <- as.character(rownames(PSI.Estimates))
-```
-
-As mentioned above, I am interested in exon splicing events with large PSI differences between tissues. To do this, I'll hunt for events where the PSI of the exon is very different from the rest in at least one tissue. However, I don't want this tissue to be associated with a specific sex (the differences in inclusion could then have to do with the sex of the subject). Furthermore, I also don't want the tissue to have fewer than 100 samples (i.e. I want to be really sure that the differences in tissues are real and not just due to a small sample size).
-
-Therefore, before I proceed, I'll remove some tissues from `Medians.Matrix`:
-
-```r
-# define tissues I want to exclude
-Bad.Tissues <- c("Ovary",
-                 "Uterus",
-                 "Vagina",
-                 "Breast",
-                 "Salivary Gland",
-                 "Testis",
-                 "Kidney",
-                 "Fallopian Tube",
-                 "Bladder",
-                 "Cervix Uteri",
-                 "Prostate")
-
-# remove tissues I want to exclude
-Medians.Matrix <- Medians.Matrix[,which(! colnames(Medians.Matrix) %in% Bad.Tissues)]
-```
-
-Now I can see which exon skipping events are the most variable. I defined 'variable exons' as those whose PSI was intermediate (between 40% and 60%) in at least one tissue, and either high (above 80%) or low (under 20%) in at least another tissue.
-
-```r
-# function to decide classify a splicing event according to the PSI
-Categorise <- function(psi){
-  Result <- NA
-  if (! is.na(psi)){
-    if (psi < 20){
-      Result <- "Low"
-    } else if (psi < 40){
-      Result <- "MidLow"
-    } else if (psi < 60){
-      Result <- "Mid"
-    } else if (psi < 80){
-      Result <- "MidHigh"
-    } else if (psi <= 100){
-      Result <- "High"
-    }
-  }
-  Result
-}
-
-# convert Medians.Matrix (with PSI numbers) into Categories.Matrix (with
-# PSI categories instead)
-Categories.Matrix <- apply(X = Medians.Matrix*100,
-                           MARGIN = 1:2,
-                           FUN = Categorise)
-colnames(Categories.Matrix) <- colnames(Medians.Matrix)
-rownames(Categories.Matrix) <- rownames(Medians.Matrix)
-
-# use Categories.Matrix to see whether a given row (a splicing event)
-# displays enough variability
-Enough.Variability <- apply(X = Categories.Matrix,
-                            MARGIN = 1,
-                            FUN = function(x){
-                              Result <- FALSE
-                              if ("High" %in% x & "Mid" %in% x) {
-                                Result <- TRUE
-                              } else if ("Low" %in% x & "Mid" %in% x){
-                                Result <- TRUE
-                              }
-                              Result
-                            })
-
-# so, which exons are variable?
-Variable.Exons <- which(Enough.Variability)
-Variable.Exons <- as.character(rownames(PSI.Estimates))[Variable.Exons]
-```
-Save `Variable.Exons` for later use. This vector contains the Psichomics IDs of all the splicing events I wanted to look at.
-
-```r
-# save
-save(Variable.Exons, file = "Variable.Exons.RData")
-```
-
-
-## Exonic regions
-
-Originally, I thought of only looking at variants located in the same exon whose PSI they affect. To do this, I loaded `Variable.Exons.RData` into R:
-
-```r
-load("Variable.Exons.RData")
-```
-I then used the ID of each splicing event to extract the chromosome where the event takes place, the start and end coordinates of the exon, as well as the name of the gene where the event occurs:
+I then used the ID of each splicing event to extract the chromosome where the event takes place, as well as the name of the corresponding gene:
 
 ```r
 # which chromosome
-Chromosomes <- sapply(as.character(Variable.Exons),
+Chromosomes <- sapply(as.character(rownames(PSI.Estimates)),
                       function(x){
                         strsplit(x,"_")[[1]][2]
                       })
 
-# starting coordinates
-Start.BED <- sapply(as.character(Variable.Exons),
-                    function(x){
-                      strand <- strsplit(x,"_")[[1]][3]
-                      if (strand == "+") {
-                        start <- as.numeric(strsplit(x,"_")[[1]][5])
-                      } else {
-                        start <- as.numeric(strsplit(x,"_")[[1]][6])
-                      }
-                      start
-                    })
-
-# end coordinates
-End.BED <- sapply(as.character(Variable.Exons),
-                  function(x){
-                    strand <- strsplit(x,"_")[[1]][3]
-                    if (strand == "+") {
-                      end <- as.numeric(strsplit(x,"_")[[1]][6])
-                    } else {
-                      end <- as.numeric(strsplit(x,"_")[[1]][5])
-                    }
-                    end
-                  })
-
 # gene symbols
-Genes <- sapply(as.character(Variable.Exons),
+Genes <- sapply(as.character(rownames(PSI.Estimates)),
                 function(x){
                   split_id <- strsplit(x,"_")[[1]]
                   split_id[length(split_id)]
                 })
 ```
-And finally, save this all as a BED file for later use:
+
+I built a data frame containing the information I just extracted:
 
 ```r
 # join everything in one data frame
-Splicing.Events.BED <- data.frame(Chr = Chromosomes,
-                                  Start = Start.BED,
-                                  End = End.BED,
-                                  ID = as.character(Variable.Exons),
-                                  Gene = Genes)
+Splicing.Events.Info <- data.frame(Chr = Chromosomes,
+                                   ID = as.character(Variable.Exons),
+                                   Gene = Genes)
+```
+And saved it as a table:
 
+```r
 # save as a BED file
-write.table(x = Splicing.Events.BED,
-            file = "Exonic_Regions.bed",
+write.table(x = Splicing.Events.Info,
+            file = "Splicing.Events.Info.txt",
             quote = F,
             row.names = F,
             col.names = T,
             sep = "\t")
 ```
 
+
 ## Gene regions
 
-Not many variants (from the VCF file) were located in the regions that I just defined (i.e. inside the same exon they potentially regulate). I decided to amplify the region where I looked at potential sQTL's to include any variant located within the same gene as the exon splicing event. For this, I needed to use the human genome annotations I downloaded previously:
+For each alternative exon, I used the GENCODE annotations to extract the coordinates of its gene and build a BED file to use further downstream. First, decompress the annotations file:
 
 ```bash
 gunzip gencode.v19.annotation.gff3.gz
 ```
-Take the coordinates corresponding to the start and end of the gene each of our exon splicing events are found in.
+Next, remove commented lines from the file:
 
 ```bash
-# an array with all the genes we are interested in
-GENES=$(tail -n +2 Exonic_Regions.bed | cut -f 5)
-
-c=0
-for each_gene in $GENES; do
-	# find the line corresponding to this gene
-	each_gene_limits=$(grep "gene_name=${each_gene};" gencode.v19.annotation.gff3 | head -n 1 | cut -f 4,5)
-	
-	# take the start and the end coordinates for the whole gene
-	gene_start=$(echo $each_gene_limits | awk '{print $1 - 1}')
-	gene_end=$(echo $each_gene_limits | awk '{print $2}')
-	
-	# save these coordinates in an array
-	all_starts[$c]=$gene_start
-	all_ends[$c]=$gene_end
-	
-	# count +1
-	c=$(($c+1))
-done
+grep -v "^#" gencode.v19.annotation.gff3 > table.gencode.v19.annotation.gff3
 ```
-Finally, create a new BED file with the new, updated coordinates:
-
-```bash
-# create the new bed file with gene regions
-head -n 1 Exonic_Regions.bed > Gene_Regions.bed
-paste <(tail -n +2 Exonic_Regions.bed) <(printf "%s\n" "${all_starts[@]}") <(printf "%s\n" "${all_ends[@]}") | awk 'BEGIN {FS="\t"} {print $1 FS $6 FS $7 FS $4 FS $5}' >> Gene_Regions.bed
-```
-
-## Prepare datasets for sQTL tests (next document)
-
-First, I read `IDs_Tissues_IschaemicTime.txt` into R and tweaked it a little bit to contain all the information I will need downstream:
+After cleaning the annotations file, we're ready to build the BED file from within R. We first load the libraries necessary for this:
 
 ```r
 library(data.table)
-
-# load table with sample information
-GTEX.Dataset <- fread(input = "IDs_Tissues_IschaemicTime.txt")
-
-# create a new column with the subject ID
-GTEX.Dataset $SUBJID <- sapply(as.character(All.Samples$SAMPID),
-                               function(x){
-                                 paste(strsplit(x,"\\.")[[1]][1:2],
-                                       sep = "-",
-                                       collapse = "-")
-                               })
-
-# factorise subject ID and tissue
-GTEX.Dataset$SUBJID <- as.character(GTEX.Dataset$SUBJID) # subject ID
-GTEX.Dataset$SMTS <- as.factor(GTEX.Dataset$SMTS) # tissue
-
-# convert ischaemic time to numeric
-GTEX.Dataset$SMTSISCH <- sapply(GTEX.Dataset$SMTSISCH,
-                                function(this.string){
-                                  gsub(pattern = "^\\.",
-                                       replacement = "-",
-                                       x = this.string,
-                                       perl = T)
-                                })
-GTEX.Dataset$SMTSISCH <- as.numeric(GTEX.Dataset$SMTSISCH)
+library(dplyr)
 ```
-Next, I loaded `PSI.Estimates`. This is a very big file containing information from many exon splicing events I am not interested in. Therefore, I used `Gene_Regions.bed` to reduce `PSI.Estimates` such that it only includes exons I wanted to analyse:
+Load the annotations file into R:
+
+```r
+Gencode.Annotations <- fread(input = "table.gencode.v19.annotation.gff3")
+colnames(Gencode.Annotations) <- c("Chromosome",
+                                   "Source",
+                                   "Type",
+                                   "Start",
+                                   "End",
+                                   "Score",
+                                   "Strand",
+                                   "Phase",
+                                   "Attributes")
+```
+I subsetted the data table so that only coordinates for gene elements labelled as "gene" were kept, and then extracted the gene symbol for each gene and added that as another column:
+
+```r
+Gencode.Annotations.Genes <- Gencode.Annotations[Type == "gene"]
+Gencode.Annotations.Genes$Gene <- sapply(Gencode.Annotations.Genes$Attributes,
+                                         function(x){
+                                           strsplit(strsplit(x,";")[[1]][6], "=")[[1]][2]
+                                         })
+```
+Next, load the `Splicing.Events.Info.txt` table that we saved in the previous section:
+
+```r
+Splicing.Events <- fread(input = "Splicing.Events.Info.txt")
+```
+Add two columns to `Splicing.Events`: one with the coordinates corresponding to the start of the gene, and one with the coordinates of the end of the gene:
+
+```r
+Splicing.Events$Start <- sapply(Splicing.Events$Gene,
+                                function(x){
+                                  row.number <- which(Gencode.Annotations.Genes$Gene == x)
+                                  if (length(row.number) > 1) {
+                                    row.number <- row.number[1]
+                                  }
+                                  if (! length(row.number) == 0){
+                                    Start <- Gencode.Annotations.Genes$Start[row.number] - 1
+                                  } else {
+                                    Start <- NA
+                                  }
+                                  Start
+                                })
+
+Splicing.Events$End <- sapply(Splicing.Events$Gene,
+                              function(x){
+                                row.number <- which(Gencode.Annotations.Genes$Gene == x)
+                                if (length(row.number) > 1) {
+                                  row.number <- row.number[1]
+                                }
+                                if (! length(row.number) == 0){
+                                  End <- Gencode.Annotations.Genes$End[row.number]
+                                } else {
+                                  End <- NA
+                                }
+                                End
+                              })
+```
+Reorder the columns so that they follow the standard BED format:
+
+```r
+Splicing.Events <- Splicing.Events %>% select(Chr, Start, End, ID, Gene)
+```
+Remove rows (splicing events) for which I could not find gene coordinates. These events mostly correspond to splicing events or genes labelled as "hypothetical" by Psichomics.
+
+```r
+Splicing.Events <- Splicing.Events[complete.cases(Splicing.Events),]
+
+```
+And save as a BED file:
+
+```r
+write.table(x = Splicing.Events,
+            file = "Gene_Regions.bed",
+                   quote = FALSE,
+                   row.names = FALSE,
+                   col.names = TRUE,
+                   sep = "\t")
+
+```
+
+
+## Prepare datasets for sQTL tests (next document)
+
+I pre-processed the sample annotations file to keep the fields I was interested in (sample ID's, tissue, ischaemic time) and saved it as `IDs_Tissues_IschaemicTime.txt`:
+
+```bash
+cut -f1,6,9 GTEx_v7_Annotations_SampleAttributesDS.txt | awk 'BEGIN {FS="\t";OFS="\t"}; {gsub(/-/, ".", $1)}{print $0}' > IDs_Tissues_IschaemicTime.txt
+
+
+```
+Similarly, I processed the subject annotations file to keep the fields corresponding to the subject ID, sex and age, and saved it as `Subject_Sex_Age.txt`:
+
+```bash
+grep -v -e '^#' -e '^$' phs000424.v7.pht002742.v7.p2.c1.GTEx_Subject_Phenotypes.GRU.txt | ghead -n -1 | cut -f 2,4,5 | sed s/-/\./ > Subject_Sex_Age.txt
+```
+
+I loaded both of these files into R:
+
+```r
+library(data.table)
+All.Samples <- fread("IDs_Tissues_IschaemicTime.txt")
+All.Subjects <- fread("Subject_Sex_Age.txt")
+```
+and combined them in a data table called `GTEX.Dataset.Annotations`:
+ 
+```r
+# create a column with subject id's
+All.Samples$SUBJID <- sapply(as.character(All.Samples$SAMPID),
+                             function(x){
+                               paste(strsplit(x, "\\.")[[1]][1:2],
+                                     sep = ".",
+                                     collapse = ".")
+                             })
+
+# and merge both data tables using common column (SUBJID)
+GTEX.Dataset.Annotations <- merge(All.Samples, All.Subjects)
+
+# rename columns of merged data table
+colnames(GTEX.Dataset.Annotations) <- c("Subject.ID",
+                                        "Sample.ID",
+                                        "Tissue",
+                                        "Ischaemic.Time",
+                                        "Sex",
+                                        "Age")
+```
+
+Next, I loaded `PSI.Estimates`. For some of the splicing events in this R object, I could not find the corresponding genomic regions (see **Gene Regions** above). Therefore, I used `Gene_Regions.bed` to reduce `PSI.Estimates` such that it only includes exons I can analyse:
 
 ```r
 # load data
@@ -310,19 +222,19 @@ load("PSI.Estimates.RData")
 PSI.Estimates <- PSI.Estimates[as.character(Splicing.Events$ID),]
 
 # also subset 
-IDs.To.Keep <- intersect(as.character(colnames(Merged.PSI)), as.character(GTEX.Dataset$SAMPID))
+IDs.To.Keep <- intersect(as.character(colnames(Merged.PSI)), as.character(GTEX.Dataset.Annotations$Sample.ID))
 PSI.Estimates <- PSI.Estimates[,IDs.To.Keep]
 ```
 Finally, subset `GTEX.Dataset` so it includes the same samples as `PSI.Estimates`:
 
 ```r
-rownames(GTEX.Dataset) <- as.character(GTEX.Dataset$SAMPID)
-GTEX.Dataset <- GTEX.Dataset[SAMPID %in% IDs.To.Keep]
+rownames(GTEX.Dataset.Annotations) <- as.character(GTEX.Dataset.Annotations$Sample.ID)
+GTEX.Dataset.Annotations <- GTEX.Dataset.Annotations[Sample.ID %in% Sample.IDs.To.Keep]
 ```
 And save objects:
 
 ```r
-save(GTEX.Dataset,
+save(GTEX.Dataset.Annotations,
      PSI.Estimates,
      file="Filtered.Annotations.PSI.Estimates.RData")
 
