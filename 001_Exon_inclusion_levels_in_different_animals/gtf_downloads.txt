@@ -1,0 +1,7 @@
+Homo_sapiens	ftp://ftp.ensembl.org/pub/release-84/gtf/homo_sapiens/Homo_sapiens.GRCh38.84.gtf.gz
+Pan_troglodytes	ftp://ftp.ensembl.org/pub/release-84/gtf/pan_troglodytes/Pan_troglodytes.CHIMP2.1.4.84.gtf.gz
+Papio_anubis	ftp://ftp.ensembl.org/pub/release-84/gtf/papio_anubis/Papio_anubis.PapAnu2.0.84.gtf.gz
+Macaca_mulatta	ftp://ftp.ensembl.org/pub/release-84/gtf/macaca_mulatta/Macaca_mulatta.MMUL_1.84.gtf.gz
+Callithrix_jacchus	ftp://ftp.ensembl.org/pub/release-84/gtf/callithrix_jacchus/Callithrix_jacchus.C_jacchus3.2.1.84.gtf.gz
+Microcebus_murinus	ftp://ftp.ensembl.org/pub/release-84/gtf/microcebus_murinus/Microcebus_murinus.micMur1.84.gtf.gz
+Mus_musculus	ftp://ftp.ensembl.org/pub/release-84/gtf/mus_musculus/Mus_musculus.GRCm38.84.gtf.gz
