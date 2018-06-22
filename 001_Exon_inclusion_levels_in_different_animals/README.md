@@ -2,9 +2,9 @@
 
 This document describes the method used to estimate the PSI of exons in different animal genomes. As an example, I'll describe the process involved in extracting this information in chimp heart, but the process should be the same for other any other species/tissue. To run this pipeline, you will need:
 
-* **Genome annotations** in .gtf format (the links to download all the annotations used in this analysis are found in [gtf_downloads.txt](gtf_downloads.txt))
+* **Genome annotations** in .gtf format (the links to download all the annotations used in this analysis are found in [gtf_downloads.txt](./gtf_downloads.txt))
 * **Genome sequence** in .fasta format (the links to download all the genomes used in this analysis are found in [genome_downloads.txt](./genome_downloads.txt))
-* **Sample files** (the links to download all sample files are found in [sample_downloads.txt]())
+* **Sample files** (the links to download all sample files are found in [sample_downloads.txt](./sample_downloads.txt))
 * **STAR v2.5.2a** installed (downloadable from [here](https://github.com/alexdobin/STAR/archive/2.5.2a.tar.gz); the latest version of the software can be downloaded from the [STAR Github repo](https://github.com/alexdobin/STAR/releases) and should also work).
 * **SAMtools v1.3.1** installed (downloadable from [here](https://sourceforge.net/projects/samtools/files/samtools/1.3.1/), later versions should also work).
 
@@ -137,5 +137,5 @@ bash ../PSI.sh StartPSI ../Exonic_Parts.gtf 101 accepted_hits.bam junctions.bed 
 
 ### 2.5. FAS exon 6
 
-The PSI of FAS exon 6 can be accessed by using the FAS gene identifier for each species and looking for the 63-nucleotide long exon (all identifiers in [fas_identifiers.txt]())
+The PSI of FAS exon 6 can be accessed by using the FAS gene identifier for each species and looking for the 63-nucleotide long exon (all identifiers in [fas_identifiers.txt](./fas_identifiers.txt))
 
