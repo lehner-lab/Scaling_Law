@@ -13,7 +13,7 @@ Unless stated otherwise, all code in this markdown file is written in bash.
 
 ## 1. Prep work
 
-Before calculating exon PSI values, we need to build the species genome indices and filter the genome annotations. This preparatory work only needs to be done once per species (e.g. in the case of Chimp, the files generated in this step will work for the heart, liver, lung, kidney and lymph node samples). All the code from this section can also be found in [example\_prep\_work.sh]().
+Before calculating exon PSI values, we need to build the species genome indices and filter the genome annotations. This preparatory work only needs to be done once per species (e.g. in the case of Chimp, the files generated in this step will work for the heart, liver, lung, kidney and lymph node samples). All the code from this section can also be found in [example\_prep\_work.sh](./example_prep_work.sh).
 
 ### 1.1. Build STAR indices
 
@@ -60,7 +60,7 @@ python dexseq_prepare_annotation.py Pan_troglodytes.CHIMP2.1.4.84.gtf Exonic_Par
 
 ## 2. Calculate exon PSI levels
 
-All the code from this section can also be found in [example\_calculate\_PSI.sh]().
+All the code from this section can also be found in [example\_calculate\_PSI.sh](./example_calculate_PSI.sh).
 
 
 ### 2.1. Download sample files
