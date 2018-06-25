@@ -1,0 +1,1 @@
+Here you will find the code used to process the raw sequencing files (in fastq format) and extract read counts for each genotype in the library.

@@ -1,0 +1,6 @@
+GACACACT	SF3B_RNAi_Pair_1_Rep_1.txt	SF3B_RNAi_Pair_2_Rep_1.txt
+ACGACTTG	SF3B_RNAi_Pair_1_Rep_2.txt	SF3B_RNAi_Pair_2_Rep_2.txt
+ATCGATCG	SF3B_RNAi_Pair_1_Rep_3.txt	SF3B_RNAi_Pair_2_Rep_3.txt
+CAACCATG	Control_RNAi_Pair_1_Rep_1.txt	Control_RNAi_Pair_2_Rep_1.txt
+CGTACCTT	Control_RNAi_Pair_1_Rep_2.txt	Control_RNAi_Pair_2_Rep_2.txt
+ACACTGTG	Control_RNAi_Pair_1_Rep_3.txt	Control_RNAi_Pair_2_Rep_3.txt
