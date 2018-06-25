@@ -79,20 +79,20 @@ do
 	echo $(date) "Concatenating file with forward reads and file with reverse-complemented reverse reads"
 	cat $FILE_WITH_FORWARD_READS $FILE_WITH_REVERSE_READS_RC > $CONCATENATED_FILE
 	
-	# use fastx_collapse to collapse concatenated file and remove repeated sequences
-	# usage the same as fastx_reverse_complement
-	echo $(date) "Collapse concatenated file and remove repeated sequences. Keeping number of occurrences."
-	$FASTX_COLLAPSE -i $CONCATENATED_FILE -Q33 > $COLLAPSED_FILE
-	
 	# use SeqTK to remove primer sequences from the start and end of the sequences
 	# usage: seqtk trimfq -b number_of_nucleotides_to_be_removed_BEFORE_sequence -e number_of_nucleotides_to_be_removed_at_the_END INPUT_FILE [STDOUT]
 	echo $(date) "Trimming primers"
-	$SEQTK_TRIM trimfq -b 26 -e 30 $COLLAPSED_FILE > $TRIMMED_FILE
+	$SEQTK_TRIM trimfq -b 26 -e 30 $CONCATENATED_FILE > $TRIMMED_FILE
+	
+	# use fastx_collapse to collapse concatenated file and remove repeated sequences
+	# usage the same as fastx_reverse_complement
+	echo $(date) "Collapse concatenated file and remove repeated sequences. Keeping number of occurrences."
+	$FASTX_COLLAPSE -i $TRIMMED_FILE -Q33 > $COLLAPSED_FILE
 	
 	# use python script to count mutations and return a table
 	# usage: python count_mutations.py INPUT_FASTA_FILE WT_SEQUENCE [STDOUT]
 	echo $(date) "Counting genotypes... almost there..."
-	$COUNT_VARIANTS $TRIMMED_FILE $WTSEQ > $FINAL_FILE_WITH_COUNTS
+	$COUNT_VARIANTS $COLLAPSED_FILE $WTSEQ > $FINAL_FILE_WITH_COUNTS
 	
 	echo $(date) "Done."
 done
@@ -150,21 +150,21 @@ do
 	# concatenate file with forward reads with reverse-complemented reverse reads
 	echo $(date) "Concatenating file with forward reads and file with reverse-complemented reverse reads"
 	cat $FILE_WITH_FORWARD_READS $FILE_WITH_REVERSE_READS_RC > $CONCATENATED_FILE
-
-	# use fastx_collapse to collapse concatenated file and remove repeated sequences
-	# usage the same as fastx_reverse_complement
-	echo $(date) "Collapse concatenated file and remove repeated sequences. Keeping number of occurrences."
-	time $FASTX_COLLAPSE -i $CONCATENATED_FILE -Q33 > $COLLAPSED_FILE
 	
 	# use SeqTK to remove primer sequences from the start and end of the sequences
 	# usage: seqtk trimfq -b number_of_nucleotides_to_be_removed_BEFORE_sequence -e number_of_nucleotides_to_be_removed_at_the_END INPUT_FILE [STDOUT]
 	echo $(date) "Trimming primers"
-	$SEQTK_TRIM trimfq -b 26 -e 27 $COLLAPSED_FILE > $TRIMMED_FILE
+	$SEQTK_TRIM trimfq -b 26 -e 27 $CONCATENATED_FILE > $TRIMMED_FILE
+	
+	# use fastx_collapse to collapse concatenated file and remove repeated sequences
+	# usage the same as fastx_reverse_complement
+	echo $(date) "Collapse concatenated file and remove repeated sequences. Keeping number of occurrences."
+	time $FASTX_COLLAPSE -i $TRIMMED_FILE -Q33 > $COLLAPSED_FILE
 	
 	# use python script to count mutations and return a table
 	# usage: python count_mutations.py INPUT_FASTA_FILE WT_SEQUENCE [STDOUT]
 	echo $(date) "Counting genotypes... almost there..."
-	$COUNT_VARIANTS $TRIMMED_FILE $WTSEQ > $FINAL_FILE_WITH_COUNTS
+	$COUNT_VARIANTS $COLLAPSED_FILE $WTSEQ > $FINAL_FILE_WITH_COUNTS
 	
 	echo $(date) "Done."
 done
