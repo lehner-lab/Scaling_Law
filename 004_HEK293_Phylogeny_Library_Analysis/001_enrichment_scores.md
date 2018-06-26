@@ -14,13 +14,16 @@ for (i in 1:9) {
   # the name of the file I need to read
   This.File.Name <- paste("Phylogeny_HEK293_BR_Rep_", i, ".3072.counts", sep = "")
   # load it in R with a generic variable name
-  This.Data.Frame <- read.table(File.Name)
+  This.Data.Frame <- read.table(This.File.Name)
+  # set column names
+  colnames(This.Data.Frame) <- c("Sequence", "Counts", "Mutations")
+  # set row names
+  rownames(This.Data.Frame) <- as.character(This.Data.Frame$Sequence)
   # variable name I want to assign it to
   This.Variable.Name <- paste("BR", i, sep = "")
   # give it the new variable name
-  assign(x = This.File.Name, value = This.Data.Frame)
-}
-```
+  assign(x = This.Variable.Name, value = This.Data.Frame)
+}```
 
 And the input replicates are labelled TR (for **T**echnical **R**eplicates):
  
@@ -30,11 +33,15 @@ for (i in 1:3) {
   # the name of the file I need to read
   This.File.Name <- paste("Phylogeny_HEK293_TR_Rep_", i, ".3072.counts", sep = "")
   # load it in R with a generic variable name
-  This.Data.Frame <- read.table(File.Name)
+  This.Data.Frame <- read.table(This.File.Name)
+  # set column names
+  colnames(This.Data.Frame) <- c("Sequence", "Counts", "Mutations")
+  # set row names
+  rownames(This.Data.Frame) <- as.character(This.Data.Frame$Sequence)
   # variable name I want to assign it to
   This.Variable.Name <- paste("TR", i, sep = "")
   # give it the new variable name
-  assign(x = This.File.Name, value = This.Data.Frame)
+  assign(x = This.Variable.Name, value = This.Data.Frame)
 }
 ```
 
@@ -78,14 +85,14 @@ Next, we will calculate the frequency of each genotype in each input and output 
 Output.Frequency <- apply(X = All.Expts[,4:12],
                           MARGIN = 2,
                           FUN = function(x){
-                            return(x/sum(x))
+                            return(x/sum(x, na.rm = T))
                           })
 
 # Frequency of each sequence in the input
 Input.Frequency <- apply(X = All.Expts[,1:3],
                          MARGIN = 2,
                          FUN = function(x){
-                           return(x/sum(x))
+                           return(x/sum(x, na.rm = T))
                          })
 ```
 Calculate the median input frequency for every genotype:
@@ -94,17 +101,18 @@ Calculate the median input frequency for every genotype:
 # Median frequency in the input
 Input.Median.Frequency <- apply(X = Input.Frequency,
                                 MARGIN = 1,
-                                FUN = median)
+                                FUN = median, na.rm = T)
 ```
 Finally, calculate enrichment scores using the formula
 
 <p align="center">
-  <img src="http://latex.codecogs.com/gif.latex?%5Ctext%7BES%7D%20%3D%20%5Cfrac%7B%5Ctext%7Bfreq%7D_%5Ctext%7Bout%7D%7D%7B%5Ctext%7Bfreq%7D_%5Ctext%7Bin%7D%7D">
+  <img src="Equations/001_es.gif">
 </p>
 
 ```r
 # calculate enrichment scores
 Enrichment.Scores <- Output.Frequency / Input.Median.Frequency
+Enrichment.Scores <- as.data.frame(Enrichment.Scores)
 ```
 Save the R object for later use.
 
