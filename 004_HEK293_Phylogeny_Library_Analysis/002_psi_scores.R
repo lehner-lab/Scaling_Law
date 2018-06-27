@@ -158,6 +158,188 @@ Whole.Dataset$Low.PSI <- Whole.Dataset$Mean - Whole.Dataset$SD
 Whole.Dataset$High.PSI <- Whole.Dataset$Mean + Whole.Dataset$SD
 
 
+
+###############################################################
+# PLOT
+#
+
+# Build the high-confidence subset of the data
+Low.Noise.Indices <- which(Whole.Dataset$SD < 10)
+Low.Noise.Enrichment.Scores <- Enrichment.Scores[Low.Noise.Indices,]
+
+# Build a matrix with correlations between the 9 replicates
+Correlation.Matrix <- round(x = cor(Low.Noise.Enrichment.Scores,
+                                    method = "pearson",
+                                    use = "complete.obs"),
+                            digits = 2)
+
+# Function to get upper triangle of the correlation matrix
+get_upper_tri <- function(cormat){
+  cormat[lower.tri(cormat)]<- NA
+  return(cormat)
+}
+
+# get it
+Upper.Triangle <- get_upper_tri(Correlation.Matrix)
+
+# load library
+library(reshape2)
+
+# melt the correlation matrix
+Melted.Correlation.Matrix <- melt(Upper.Triangle, na.rm = TRUE)
+
+# load library
+library(ggplot2)
+
+# build ggplot2 object
+ggheatmap <- ggplot(data = Melted.Correlation.Matrix,
+                    aes(Var2, Var1, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "white",
+                       high = rgb(39/255,170/255, 225/255), 
+                       midpoint = 0.58, limit = c(0.57,0.98),
+                       space = "Lab", 
+                       name="Pearson\nCorrelation") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 45,
+                                   vjust = 1, 
+                                   size = 12,
+                                   hjust = 1)) +
+  coord_fixed()
+
+# plot
+ggheatmap + 
+  geom_text(aes(Var2, Var1, label = value), color = "black", size = 4) +
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.grid.major = element_blank(),
+    # panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    legend.justification = c(1, 0),
+    legend.position = c(0.6, 0.7),
+    legend.direction = "horizontal",
+    panel.border = element_rect(colour = "black",
+                                fill = NA,
+                                size = 1)) +
+  guides(fill = guide_colorbar(barwidth = 7,
+                               barheight = 1,
+                               title.position = "top",
+                               title.hjust = 0.5))
+
+
+#
+#
+###############################################################
+
+
+
+
+###############################################################
+# PLOT
+#
+
+par(pty="s")
+plot(Low.Noise.Enrichment.Scores$BR6,
+     Low.Noise.Enrichment.Scores$BR8,
+     xlim = c(0,1.5),
+     ylim = c(0,1.5),
+     xlab = "ES (Replicate 6)",
+     ylab = "ES (Replicate 8)",
+     las = 1,
+     pch = 19,
+     cex = 0.5)
+
+#
+#
+###############################################################
+
+
+
+
+###############################################################
+# PLOT
+#
+
+# Build a matrix with correlations between the 9 replicates
+Correlation.Matrix <- round(x = cor(Enrichment.Scores,
+                                    method = "pearson",
+                                    use = "complete.obs"),
+                            digits = 2)
+
+# get the upper triangle
+Upper.Triangle <- get_upper_tri(Correlation.Matrix)
+
+# melt the correlation matrix
+Melted.Correlation.Matrix <- melt(Upper.Triangle, na.rm = TRUE)
+
+# build ggplot2 object
+ggheatmap <- ggplot(data = Melted.Correlation.Matrix,
+                    aes(Var1, Var2, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "white",
+                       high = rgb(39/255,170/255, 225/255), 
+                       midpoint = 0.58, limit = c(0.57,0.98),
+                       space = "Lab", 
+                       name="Pearson\nCorrelation") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 45,
+                                   vjust = 1, 
+                                   size = 12,
+                                   hjust = 1)) +
+  coord_fixed()
+
+
+# plot
+ggheatmap + 
+  geom_text(aes(Var1, Var2, label = value), color = "black", size = 4) +
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.grid.major = element_blank(),
+    # panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    legend.justification = c(1, 0),
+    legend.position = c(0.99, 0.3),
+    legend.direction = "horizontal",
+    panel.border = element_rect(colour = "black",
+                                fill = NA,
+                                size = 1)) +
+  guides(fill = guide_colorbar(barwidth = 7,
+                               barheight = 1,
+                               title.position = "top",
+                               title.hjust = 0.5))
+
+#
+#
+###############################################################
+
+
+
+
+###############################################################
+# PLOT
+#
+
+par(pty="s")
+plot(Enrichment.Scores$BR6,
+     Enrichment.Scores$BR8,
+     xlim = c(0,1.5),
+     ylim = c(0,1.5),
+     xlab = "ES (Replicate 6)",
+     ylab = "ES (Replicate 8)",
+     las = 1,
+     pch = 19,
+     cex = 0.5)
+
+#
+#
+###############################################################
+
+
+
 ###############################################################
 # PLOT
 #
