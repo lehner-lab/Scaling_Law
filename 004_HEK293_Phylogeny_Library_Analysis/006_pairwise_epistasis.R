@@ -1,5 +1,3 @@
-
-
 # load Whole.Dataset
 load("002_whole_dataset.RData")
 
@@ -24,10 +22,6 @@ P.Values.Distance.DF <- data.frame(Main = c(),
                                    Magnitude = c(),
                                    P.Value = c(),
                                    Minus.Log10.P.Value = c())
-
-
-
-
 
 # loop through each mutations and test for interactions with all other mutations
 for (k in 1:length(Final.Vs.Starting.PSI.List)){
@@ -55,7 +49,6 @@ for (k in 1:length(Final.Vs.Starting.PSI.List)){
     Other.Mutations <- Other.Mutations[-which(Other.Mutations == "C-18-G")]
   }
   
-  
   # open empty vectors that we'll fill in later with information
   P.Values.Vector <- vector()
   Magnitude.Effect.Vector <- vector()
@@ -77,7 +70,6 @@ for (k in 1:length(Final.Vs.Starting.PSI.List)){
                                                Mutations.Here <- strsplit(x, ";")[[1]]
                                                Each.Other.Mutation %in% Mutations.Here
                                              }))
-    
     
     # Calculate the effect [ln(A)] of This.Mutation in all the backgrounds of This.Mutation.DF
     All.Effects <- Logit.Transform(0.01*This.Mutation.DF$Final.PSI) - Logit.Transform(0.01*This.Mutation.DF$Starting.PSI)
@@ -160,33 +152,7 @@ P.Values.Distance.DF$Main <- as.character(P.Values.Distance.DF$Main)
 P.Values.Distance.DF$Epistatic <- as.character(P.Values.Distance.DF$Epistatic)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Plot test results
-
-
-
-
-
 # a matrix of all possible pairwise combinations except C18G and C18T
 All.Possible.Interactions <- combn(x = names(Final.Vs.Starting.PSI.List), m = 2)
 All.Possible.Interactions <- All.Possible.Interactions[,-47]
@@ -196,6 +162,10 @@ Significance.Level <- 0.05
 
 # set a seed because I'll use jitter in the plots below and I want this to be reproducible
 set.seed(2)
+
+###############################################################
+# PLOT
+#
 
 # start an empty plot
 par(pty="s")
@@ -241,42 +211,10 @@ for (i in 1:ncol(All.Possible.Interactions)) {
 # draw a dashed red line at the Significance level used as a threshold
 abline(h = -1*log10(Significance.Level),
        lwd = 2, lty = 3, col = "red")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+       
+#
+#
+###############################################################
 
 
 
@@ -312,15 +250,13 @@ for (i in 1:ncol(All.Possible.Interactions))  {
   
 }
 
-
-
-
-
-
 # load violin plot library
 library(vioplot)
 
-# plot
+###############################################################
+# PLOT
+#
+
 set.seed(3)
 plot(NULL,
      xlim = c(0.5,2.5),
@@ -352,4 +288,244 @@ axis(side = 1,
      labels = c("Strong interaction", "No interaction"))
 axis(side = 2,
      las = 1)
+     
+#
+#
+###############################################################
 
+
+
+# load Whole.Dataset
+load("002_whole_dataset.RData")
+
+# use Whole.Dataset to get the genotypes with low variance
+Low.Noise.Genotypes <- as.character(Whole.Dataset$Mutation.IDs)[which(Whole.Dataset$SD < 10)]
+
+# load Final.Vs.Starting.PSI
+load("004_final_vs_starting_psi_list.RData")
+
+# mutations in the order in which I'll plot them
+Single.Mutations <- c("C-18-G", "C-18-T", "T-24-C", "nothing",
+                      "T-19-G", "T-19-G", "G-26-T", "nothing",
+                      
+                      "C-32-T", "C-39-T", "C-39-T", "T-49-C",
+                      "G-35-T", "C-41-G", "G-44-A", "G-51-C")
+
+
+Epistatic.Mutations <- c("T-19-G", "T-19-G", "G-26-T", "nothing",
+                         "C-18-G", "C-18-T", "T-24-C", "nothing",
+                         
+                         "G-35-T", "C-41-G", "G-44-A", "G-51-C",
+                         "C-32-T", "C-39-T", "C-39-T", "T-49-C")
+
+###############################################################
+# PLOT
+#
+
+par(mar = c(0,0,1,1) + 0.1)
+par(oma = c(5,4,0,0) + 0.1)
+par(mfrow=c(4,4))
+par(pty="s")
+
+for (i in 1:length(Single.Mutations)){
+  This.Number <- i
+  print(i)
+  # what is the ID of this mutation?
+  This.Mutation <- as.character(Single.Mutations)[This.Number]
+  
+  if (This.Mutation == "nothing"){
+    print("null!") 
+    plot(NULL,
+         xlab = "",
+         ylab = "",
+         axes = F,
+         main = "",
+         xlim = c(0,1),
+         ylim = c(0,1))
+    next
+  }
+  print("sadsadsad")
+  # extract the data frame
+  This.Mutation.DF <- Final.Vs.Starting.PSI.List[[This.Mutation]]
+  
+  # Get low noise rows
+  Low.Noise.Rows <- which(as.character(This.Mutation.DF$Genotype.Final) %in% Low.Noise.Genotypes & as.character(This.Mutation.DF$Genotype.Starting) %in% Low.Noise.Genotypes)
+  
+  # subset This.Mutation.DF
+  This.Mutation.DF <- This.Mutation.DF[Low.Noise.Rows,]
+  
+  # which is the epistatic mutation?
+  Epistatic.Mutation <- as.character(Epistatic.Mutations)[i]
+  Epistatic.Rows <- which(sapply(as.character(This.Mutation.DF$Genotype.Final),
+                                 function(x){
+                                   Epistatic.Mutation %in% strsplit(x,";")[[1]]
+                                 }))
+  
+  # colours for dots in scatterplot
+  Plot.Colour <- rep("black", nrow(This.Mutation.DF))
+  Plot.Colour[Epistatic.Rows] <- "orange"
+  
+  # plot final vs starting PSI
+  par(pty="s")
+  plot(NULL,
+       xlim = c(0,100),
+       ylim = c(0,100),
+       xlab = "",
+       ylab = "",
+       axes = F)
+  abline(0,1, col = "gray80", lwd = 2)
+  par(new=T)
+  plot(This.Mutation.DF$Starting.PSI,
+       This.Mutation.DF$Final.PSI,
+       pch = 19,
+       cex = 0.5,
+       xlim = c(0,100),
+       ylim = c(0,100),
+       xlab = "",
+       ylab = "",
+       main = "",
+       axes = F,
+       col = Plot.Colour)
+  
+  # surround the plot with a box (no axes were drawn yet)
+  box()
+  
+  # stick the name of the mutation in the top left part of the plot
+  text(x = 0,
+       y = 90,
+       labels = paste(strsplit(This.Mutation, split = "-")[[1]],
+                      sep = "",
+                      collapse = ""),
+       pos = 4,
+       cex = 1.5,
+       col = "#3375CA")
+  
+  # draw left-hand side axis if this plot is to the left
+  if (i %in% c(1,5,9,13)){
+    axis(side = 2, las = 1)
+  }
+  
+  # draw bottom axis if this plot is at the bottom
+  if (i %in% c(13:16)) {
+    axis(side = 1)
+  }
+  
+}
+
+# axis labels
+title(xlab = "Starting PSI",
+      ylab = "Final PSI",
+      outer = TRUE,
+      line = 3)
+
+par(mar = c(5,4,4,2)+0.1)
+par(oma = c(0,0,0,0))
+par(mfrow=c(1,1))
+
+#
+#
+###############################################################
+
+
+
+###############################################################
+# PLOT
+#
+
+par(mar = c(0,0,1,1) + 0.1)
+par(oma = c(5,4,0,0) + 0.1)
+par(mfrow=c(4,4))
+par(pty="s")
+
+for (i in 1:length(Single.Mutations)){
+  This.Number <- i
+  print(i)
+  # what is the ID of this mutation?
+  This.Mutation <- as.character(Single.Mutations)[This.Number]
+  
+  if (This.Mutation == "nothing"){
+    print("null!") 
+    plot(NULL,
+         xlab = "",
+         ylab = "",
+         axes = F,
+         main = "",
+         xlim = c(0,1),
+         ylim = c(0,1))
+    next
+  }
+  print("sadsadsad")
+  # extract the data frame
+  This.Mutation.DF <- Final.Vs.Starting.PSI.List[[This.Mutation]]
+  
+  # which is the epistatic mutation?
+  Epistatic.Mutation <- as.character(Epistatic.Mutations)[i]
+  Epistatic.Rows <- which(sapply(as.character(This.Mutation.DF$Genotype.Final),
+                                 function(x){
+                                   Epistatic.Mutation %in% strsplit(x,";")[[1]]
+                                 }))
+  
+  # colours for dots in scatterplot
+  Plot.Colour <- rep("black", nrow(This.Mutation.DF))
+  Plot.Colour[Epistatic.Rows] <- "orange"
+  
+  # plot final vs starting PSI
+  par(pty="s")
+  plot(NULL,
+       xlim = c(0,100),
+       ylim = c(0,100),
+       xlab = "",
+       ylab = "",
+       axes = F)
+  abline(0,1, col = "gray80", lwd = 2)
+  par(new=T)
+  plot(This.Mutation.DF$Starting.PSI,
+       This.Mutation.DF$Final.PSI,
+       pch = 19,
+       cex = 0.5,
+       xlim = c(0,100),
+       ylim = c(0,100),
+       xlab = "",
+       ylab = "",
+       main = "",
+       axes = F,
+       col = Plot.Colour)
+  
+  # surround the plot with a box (no axes were drawn yet)
+  box()
+  
+  # stick the name of the mutation in the top left part of the plot
+  text(x = 0,
+       y = 90,
+       labels = paste(strsplit(This.Mutation, split = "-")[[1]],
+                      sep = "",
+                      collapse = ""),
+       pos = 4,
+       cex = 1.5,
+       col = "#3375CA")
+  
+  # draw left-hand side axis if this plot is to the left
+  if (i %in% c(1,5,9,13)){
+    axis(side = 2, las = 1)
+  }
+  
+  # draw bottom axis if this plot is at the bottom
+  if (i %in% c(13:16)) {
+    axis(side = 1)
+  }
+  
+}
+
+# axis labels
+title(xlab = "Starting PSI",
+      ylab = "Final PSI",
+      outer = TRUE,
+      line = 3)
+
+par(mar = c(5,4,4,2)+0.1)
+par(oma = c(0,0,0,0))
+par(mfrow=c(1,1))
+
+#
+#
+###############################################################

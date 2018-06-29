@@ -357,15 +357,63 @@ This is what the output looks like:
 
 ## 2. Visualising pairwise interactions
 
+To visualise the significant interactions we identified, the code use is practically the same as the one used for Figure S3A/S3C (see [005\_non\_monotonic\_scaling.md](./005_non_monotonic_scaling.md)), with the difference that the points are coloured according to whether or not the epistatic mutation is found in the background. After loading `002_whole_dataset.RData` and `004_final_vs_starting_psi_list.RData`:
 
+```r
+# load Whole.Dataset
+load("002_whole_dataset.RData")
 
+# load Final.Vs.Starting.PSI
+load("004_final_vs_starting_psi_list.RData")
+```
+And creating a vector with the low-variance genotypes:
 
+```r
+# use Whole.Dataset to get the genotypes with low variance
+Low.Noise.Genotypes <- as.character(Whole.Dataset$Mutation.IDs)[which(Whole.Dataset$SD < 10)]
+```
+Build a vector with the single mutations whose behaviour I want to plot and in which order:
 
+```r
+# mutations in the order in which I'll plot them
+Single.Mutations <- c("C-18-G", "C-18-T", "T-24-C", "nothing",
+                      "T-19-G", "T-19-G", "G-26-T", "nothing",
+                      
+                      "C-32-T", "C-39-T", "C-39-T", "T-49-C",
+                      "G-35-T", "C-41-G", "G-44-A", "G-51-C")
+```
+And another vector with the epistatic mutations corresponding to the mutations in the vector above:
 
+```r
+Epistatic.Mutations <- c("T-19-G", "T-19-G", "G-26-T", "nothing",
+                         "C-18-G", "C-18-T", "T-24-C", "nothing",
+                         
+                         "G-35-T", "C-41-G", "G-44-A", "G-51-C",
+                         "C-32-T", "C-39-T", "C-39-T", "T-49-C")
+```
+We next loop through `Single.Mutations` to generate the scatter plots as we did in [005\_non\_monotonic\_scaling.md](./005_non_monotonic_scaling.md). The main difference are these lines just before plotting:
 
+```r
+# which is the epistatic mutation?
+Epistatic.Mutation <- as.character(Epistatic.Mutations)[i]
+Epistatic.Rows <- which(sapply(as.character(This.Mutation.DF$Genotype.Final),
+                               function(x){
+                                 Epistatic.Mutation %in% strsplit(x,";")[[1]]
+                               }))
 
+# colours for dots in scatterplot
+Plot.Colour <- rep("black", nrow(This.Mutation.DF))
+Plot.Colour[Epistatic.Rows] <- "orange"
+```
+The figures produced look like this for the low-variance data points:
 
+<p align="center">
+  <img width = 600 height = 600 src="Figures/006_scatter_plot_low_variance.png">
+  <br> Figure 5D
+</p>
 
-
-
-
+Or like this for all the data points:
+<p align="center">
+  <img width = 600 height = 600 src="Figures/006_scatter_plot_all_variance.png">
+  <br> Figure S6A
+</p>
