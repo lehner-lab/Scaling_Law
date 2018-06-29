@@ -1,6 +1,6 @@
 # Pairwise epistasis
 
-In this document I explain the code found in [006\_pairwise\_epistasis.R](./005_pairwise_epistasis.R), where I discover and visualise the pairwise epistatic interactions present in the mutant library.
+In this document I explain the code found in [006\_pairwise\_epistasis.R](./006_pairwise_epistasis.R), where I discover and visualise the pairwise epistatic interactions present in the mutant library.
 
 Unless stated otherwise, all the code in this document is written in R.
 
