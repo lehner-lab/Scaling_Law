@@ -23,7 +23,8 @@ for (i in 1:9) {
   This.Variable.Name <- paste("BR", i, sep = "")
   # give it the new variable name
   assign(x = This.Variable.Name, value = This.Data.Frame)
-}```
+}
+```
 
 And the input replicates are labelled TR (for **T**echnical **R**eplicates):
  
