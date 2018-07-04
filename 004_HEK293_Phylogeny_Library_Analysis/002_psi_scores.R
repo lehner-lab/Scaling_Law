@@ -76,7 +76,7 @@ arrows(x0 = Enrichment.Scores$Mean,
        length = 0.05,
        angle = 90,
        code = 3,
-       col = "gray80)
+       col = "gray80")
 
 # standard deviation error bars for enrichment scores
 arrows(x0 = Enrichment.Scores$Mean - Enrichment.Scores$SD,
@@ -86,7 +86,7 @@ arrows(x0 = Enrichment.Scores$Mean - Enrichment.Scores$SD,
        length = 0.05,
        angle = 90,
        code = 3,
-       col = "gray80)
+       col = "gray80")
 
 # draw points
 par(new=T)
