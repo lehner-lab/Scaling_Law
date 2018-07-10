@@ -159,7 +159,7 @@ do
 	# use fastx_collapse to collapse concatenated file and remove repeated sequences
 	# usage the same as fastx_reverse_complement
 	echo $(date) "Collapse concatenated file and remove repeated sequences. Keeping number of occurrences."
-	time $FASTX_COLLAPSE -i $TRIMMED_FILE -Q33 > $COLLAPSED_FILE
+	$FASTX_COLLAPSE -i $TRIMMED_FILE -Q33 > $COLLAPSED_FILE
 	
 	# use python script to count mutations and return a table
 	# usage: python count_mutations.py INPUT_FASTA_FILE WT_SEQUENCE [STDOUT]
