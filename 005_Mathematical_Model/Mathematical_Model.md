@@ -1,5 +1,8 @@
 # Mathematical model of exon competition
 
+In this document I explain the code found in [Mathematical\_Model.R](./Mathematical_Model.R), where I describe the behaviour of the different parameters in our exon competition model.
+
+Unless stated otherwise, all the code in this document is written in R.
 
 ## 1. Sigmoidal relationship between PSI and log k6
 
