@@ -114,5 +114,5 @@ PSI.Estimates <- PSI.Estimates[,Common.Samples]
 And finally, save both R objects:
 
 ```r
-save(GTEX.Annotations, PSI.Estimates, file = "Tissues_Compared_Datasets.RData")
+save(GTEX.Dataset, PSI.Estimates, file = "Tissues_Compared_Datasets.RData")
 ```
