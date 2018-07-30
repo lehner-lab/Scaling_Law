@@ -1,8 +1,6 @@
 # Downstream Analysis
 
-
-
-This document contains all the R code needed to process the `Tissues_Compared_Datasets.RData` file generated in the previous step and compare exon inclusion in brain and in skin.
+This document explains the code found in [002\_downstream\_analysis.R](002_downstream_analysis.R), which processes the `Tissues_Compared_Datasets.RData` file generated in the previous step to compare exon inclusion in brain and in skin. All the code in this document is written in R.
 
 ## Data processing in R
 
@@ -132,20 +130,13 @@ I then used the code below to draw boxplots and visualise how the ΔPSI depends 
 To visualise how the increase in exon inclusion depends on the starting PSI:
 
 ```r
-# colour palette for this plot
-myPalette <- colorRampPalette(c("gray95", "firebrick2"))(n = 10)
-
 # plot!
-ggplot(data = Exons.Up, mapping = aes(x = Group,
-                                      y = (Skin - Brain)*100,
-                                      fill = Group)) +
-  geom_boxplot(outlier.shape = NA, notch = T) +
-  geom_jitter(aes(Group,(Skin - Brain)*100),
-              position=position_jitter(width=0.25,
-                                       height=0),
-              alpha=0.1,
-              size=0.5,
-              show.legend=FALSE) +
+ggplot(data = Exons.Up,
+       mapping = aes(x = Group,
+                     y = (Skin - Brain)*100)) +
+  geom_boxplot(outlier.shape = NA,
+               notch = T,
+               fill = "#D66F79") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -158,7 +149,6 @@ ggplot(data = Exons.Up, mapping = aes(x = Group,
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12)) +
   coord_cartesian(ylim = c(0,100)) + 
-  scale_fill_manual(values = c(myPalette[1:10])) +
   ylab(expression(Delta*PSI)) +
   xlab("Starting PSI") +
   scale_x_discrete(labels = c("1" = "[0-10)",
@@ -172,8 +162,11 @@ ggplot(data = Exons.Up, mapping = aes(x = Group,
                               "9" = "[80-90)",
                               "10" = "[90-100]"))
 ```
+<p align="center">
+  <img width = 450 height = 450 src="Figures/Brain_Skin_Up.png">
+  <br> Figure 7C
+</p>
 
-![](Figures/Brain_Skin_Up.png)
 
 
 ### More exon skipping
@@ -181,21 +174,13 @@ ggplot(data = Exons.Up, mapping = aes(x = Group,
 To visualise how the decrease in exon inclusion depends on the starting PSI:
 
 ```r
-# colour palette for this plot
-myPalette <- colorRampPalette(c("gray95", "dodgerblue3"))(n = 10)
-
 # plot!
-ggplot(data = Exons.Down, mapping = aes(x = Group,
-                                        y = (Skin - Brain)*100,
-                                        fill = Group)) +
+ggplot(data = Exons.Down,
+       mapping = aes(x = Group,
+                     y = (Skin - Brain)*100)) +
   geom_boxplot(outlier.shape = NA,
-               notch = T) +
-  geom_jitter(aes(Group,(Skin - Brain)*100),
-              position=position_jitter(width=0.25,
-                                       height=0),
-              alpha=0.1,
-              size=0.5,
-              show.legend=FALSE) +
+               notch = T,
+               fill = "#6EA7D3") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -208,7 +193,6 @@ ggplot(data = Exons.Down, mapping = aes(x = Group,
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12)) +
   coord_cartesian(ylim = c(-100,0)) + 
-  scale_fill_manual(values = c(myPalette[1:10])) +
   ylab(expression(Delta*PSI)) +
   xlab("Starting PSI") +
   scale_x_discrete(labels = c("1" = "[0-10)",
@@ -222,4 +206,7 @@ ggplot(data = Exons.Down, mapping = aes(x = Group,
                               "9" = "[80-90)",
                               "10" = "[90-100]"))
 ```
-![](Figures/Brain_Skin_Down.png)
+<p align="center">
+  <img width = 450 height = 450 src="Figures/Brain_Skin_Down.png">
+  <br> Figure 7C
+</p>
