@@ -1,9 +1,10 @@
 # Raw files
 
+In this document, I explain the code found in [001a\_download\_raw\_files.sh](001a_download_raw_files.sh) and [001b\_process\_raw\_files.R](001b_process_raw_files.R). The code in this markdown file is written in bash or in R, as indicated in each section. Please note that the files produced by this document are very big (> 700Mb) and so have not been included in the repository. These instructions should be enough to reproduce the missing files, but please feel free to contact me if you are having trouble with this.
+
+## Choice of tissues
 
 To compare exon inclusion in two different tissues, we chose the two tissues (Brain and Skin) with the highest number of samples in the [GTEx Project](https://www.gtexportal.org/home/).
-
-Please note that the files produced by this document are very big (> 700Mb) and so have not been included in the repository. These instructions should be enough to reproduce the missing files, but please feel free to contact me if you are having trouble with this.
 
 ## Download files
 
@@ -33,7 +34,7 @@ Before anything else, the junction read counts file has to be decompressed:
 gunzip GTEx_Analysis_2016-01-15_v7_STARv2.4.2a_junctions.gct.gz
 ```
 
-To process the GTEx junction read counts file and extract PSI information about alternative splicing events throughout the genome, I used the Psichomics library in R (available on [GitHub](https://github.com/nuno-agostinho/psichomics) and [Bioconductor](https://bioconductor.org/packages/release/bioc/html/psichomics.html)). What follows in the remainder of this document is R code.
+To process the GTEx junction read counts file and extract PSI information about alternative splicing events throughout the genome, I used the Psichomics library in R (available on [GitHub](https://github.com/nuno-agostinho/psichomics) and [Bioconductor](https://bioconductor.org/packages/release/bioc/html/psichomics.html)). **What follows in the remainder of this document is R code.**
 
 First, load the library:
 
