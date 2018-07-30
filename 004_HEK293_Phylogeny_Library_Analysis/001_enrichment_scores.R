@@ -7,7 +7,7 @@ for (i in 1:9) {
   # the name of the file I need to read
   This.File.Name <- paste("Phylogeny_HEK293_BR_Rep_", i, ".3072.counts", sep = "")
   # load it in R with a generic variable name
-  This.Data.Frame <- read.table(This.File.Name)
+  This.Data.Frame <- read.table(This.File.Name, header = T)
   # set column names
   colnames(This.Data.Frame) <- c("Sequence", "Counts", "Mutations")
   # set row names
@@ -23,7 +23,7 @@ for (i in 1:3) {
   # the name of the file I need to read
   This.File.Name <- paste("Phylogeny_HEK293_TR_Rep_", i, ".3072.counts", sep = "")
   # load it in R with a generic variable name
-  This.Data.Frame <- read.table(This.File.Name)
+  This.Data.Frame <- read.table(This.File.Name, header = T)
   # set column names
   colnames(This.Data.Frame) <- c("Sequence", "Counts", "Mutations")
   # set row names
