@@ -2,11 +2,11 @@
 
 In this document, I explain the code found in [001a\_download\_raw\_files.sh](001a_download_raw_files.sh) and [001b\_process\_raw\_files.R](001b_process_raw_files.R). The code in this markdown file is written in bash or in R, as indicated in each section. Please note that the files produced by this document are very big (> 700Mb) and so have not been included in the repository. These instructions should be enough to reproduce the missing files, but please feel free to contact me if you are having trouble with this.
 
-## Choice of tissues
+## 1. Choice of tissues
 
 To compare exon inclusion in two different tissues, we chose the two tissues (Brain and Skin) with the highest number of samples in the [GTEx Project](https://www.gtexportal.org/home/).
 
-## Download files
+## 2. Download files
 
 I downloaded 2 files from the GTEx Project [downloads page](https://www.gtexportal.org/gtex_analysis_v7/datasets):
 
@@ -15,7 +15,7 @@ I downloaded 2 files from the GTEx Project [downloads page](https://www.gtexport
 
 To download these files, you'll need to create a GTEx login account for free.
 
-## Process sample annotations file
+## 3. Process sample annotations file
 
 I used the sample annotations file to build a table linking each GTEx sample ID with the tissue it comes from:
 
@@ -25,7 +25,7 @@ cut -f1,6 GTEx_v7_Annotations_SampleAttributesDS.txt | sed s/-/\./g > IDs_Tissue
 ```
 
 
-## Process junction read counts file
+## 4. Process junction read counts file
 
 Before anything else, the junction read counts file has to be decompressed:
 
@@ -60,8 +60,6 @@ Psichomics also requires the user to specify the minimum number of read counts n
 # minimum read counts
 minReads <- 10
 ```
-
-
 Load the junction read counts file into R:
 
 ```r
@@ -83,9 +81,7 @@ PSI.Estimates <- quantifySplicing(annotation = annotation,
 ```
 **Warning**: because the junction read counts file is so big (~9Gb), the splicing quantification step can take a long time and your R session might run out of RAM. If that occurs, the easiest workaround is to split the junction file into 5-10 different files and process each of them separately, and merge the final processed files later.
 
-
-
-## Subset annotations data frame and save
+## 5. Subset annotations data frame and save
 
 GTEx did not count junction reads for all its sample. Therefore, I subsetted the annotations data frame so it only contained samples found in the `PSI.Estimates` data frame. To do this, I first loaded `IDs_Tissues.txt` into R:
 
@@ -114,5 +110,5 @@ PSI.Estimates <- PSI.Estimates[,Common.Samples]
 And finally, save both R objects:
 
 ```r
-save(GTEX.Annotations, PSI.Estimates, file = "Tissues_Compared_Datasets.RData")
+save(GTEX.Dataset, PSI.Estimates, file = "Tissues_Compared_Datasets.RData")
 ```
