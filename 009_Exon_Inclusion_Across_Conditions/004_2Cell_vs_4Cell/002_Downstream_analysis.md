@@ -1,10 +1,9 @@
 # Downstream Analysis
 
+This document explains the code found in [002\_downstream\_analysis.R](002_downstream_analysis.R), which processes the `2C_4C_TABLE_EXONS.txt` file generated in the previous step. That file is provided in `Data` folder so feel free to jump straight to this code if you don't want to process the raw files yourself. All the code written in this document is written in R.
 
 
-This document contains all the R code needed to process the `2C_4C_TABLE_EXONS.txt` file generated in the previous step. That file is provided in `Data` folder so feel free to jump straight to this code if you don't want to process the raw files. 
-
-## Data processing in R
+## 1. Data processing in R
 
 We first load the file into R:
 
@@ -17,7 +16,7 @@ Samples.Table <- read.table(file = "Data/2C_4C_TABLE_EXONS.txt",
 For all exon skipping events in each of the two conditions to be compared (2-cell-state human embryo vs 4-cell-state), I took the average PSI across all samples whose quality scores were labelled as `Pass`. If there were none, the average PSI set to `NA`.
 
 ```r
-# Calculate the mean PSI for all exon skipping events with WT SF3B1
+# Calculate the mean PSI for all exon skipping events in the 2-cell stage
 Samples.Table$Mean.2C <- apply(X = Samples.Table[,grep("^X2C",
                                                         colnames(Samples.Table),
                                                         perl = T)],
@@ -37,7 +36,7 @@ Samples.Table$Mean.2C <- apply(X = Samples.Table[,grep("^X2C",
                                   mean.psi
                                 })
 
-# Calculate the mean PSI for all exon skipping events with mutated SF3B1
+# Calculate the mean PSI for all exon skipping events in the 4-cell stage
 Samples.Table$Mean.4C <- apply(X = Samples.Table[,grep("^X4C",
                                                        colnames(Samples.Table),
                                                        perl = T)],
@@ -58,7 +57,6 @@ Samples.Table$Mean.4C <- apply(X = Samples.Table[,grep("^X4C",
                                  mean.psi
                                })
 ```
-
 To calculate the effect of these two different developmental stages on exon inclusion, I subtracted the mean PSI value in the 2-cell stage (the 'starting PSI') from the mean PSI value in the 4-cell stage (the 'final PSI'):
 
 ```r
@@ -89,38 +87,28 @@ Exons.Down$Group <- factor(Exons.Down$Group,
 ```
 
 
+## 2. Plots
 
-
-## Plots
-
-To visualise the effect of developmental stage on exon inclusion, I used two libraries:
+To visualise the effect of developmental stage on exon inclusion, I used the ggplot2 library:
 
 ```r
 library(ggplot2)
-library(RColorBrewer)
 ```
 
 I then used the code below to draw boxplots and visualise how the ΔPSI depends on the starting levels of exon inclusion.
 
-### More exon inclusion
+### 2.1. More exon inclusion
 
 To visualise how the increase in exon inclusion depends on the starting PSI:
 
 ```r
-# colour palette for this plot
-myPalette <- colorRampPalette(c("gray95", "firebrick2"))(n = 10)
-
 # plot!
-ggplot(data = Exons.Up, mapping = aes(x = Group,
-                                      y = FourCells.Minus.TwoCells,
-                                      fill = Group)) +
-  geom_boxplot(outlier.shape = NA, notch = T) +
-  geom_jitter(aes(Group, FourCells.Minus.TwoCells),
-              position=position_jitter(width=0.25,
-                                       height=0),
-              alpha=0.1,
-              size=0.5,
-              show.legend=FALSE) +
+ggplot(data = Exons.Up,
+       mapping = aes(x = Group,
+                     y = FourCells.Minus.TwoCells)) +
+  geom_boxplot(outlier.shape = NA,
+               notch = T,
+               fill = "#D66F79") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -133,7 +121,6 @@ ggplot(data = Exons.Up, mapping = aes(x = Group,
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12)) +
   coord_cartesian(ylim = c(0,50)) + 
-  scale_fill_manual(values = c(myPalette[1:10])) +
   ylab(expression(Delta*PSI)) +
   xlab("Starting PSI") +
   scale_x_discrete(labels = c("1" = "[0-10)",
@@ -147,30 +134,23 @@ ggplot(data = Exons.Up, mapping = aes(x = Group,
                               "9" = "[80-90)",
                               "10" = "[90-100]"))
 ```
+<p align="center">
+  <img width = 450 height = 450 src="Figures/4_Cell_Up.png">
+  <br> Figure 7C
+</p>
 
-![](Figures/4_Cell_Up.png)
-
-
-### More exon skipping
+### 2.2. More exon skipping
 
 To visualise how the decrease in exon inclusion depends on the starting PSI:
 
 ```r
-# colour palette for this plot
-myPalette <- colorRampPalette(c("gray95", "dodgerblue3"))(n = 10)
-
 # plot!
-ggplot(data = Exons.Down, mapping = aes(x = Group,
-                                        y = FourCells.Minus.TwoCells,
-                                        fill = Group)) +
+ggplot(data = Exons.Down,
+       mapping = aes(x = Group,
+                     y = FourCells.Minus.TwoCells)) +
   geom_boxplot(outlier.shape = NA,
-               notch = T) +
-  geom_jitter(aes(Group, FourCells.Minus.TwoCells),
-              position=position_jitter(width=0.25,
-                                       height=0),
-              alpha=0.1,
-              size=0.5,
-              show.legend=FALSE) +
+               notch = T,
+               fill = "#6EA7D3") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -183,7 +163,6 @@ ggplot(data = Exons.Down, mapping = aes(x = Group,
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12)) +
   coord_cartesian(ylim = c(-50,0)) + 
-  scale_fill_manual(values = c(myPalette[1:10])) +
   ylab(expression(Delta*PSI)) +
   xlab("Starting PSI") +
   scale_x_discrete(labels = c("1" = "[0-10)",
@@ -197,4 +176,7 @@ ggplot(data = Exons.Down, mapping = aes(x = Group,
                               "9" = "[80-90)",
                               "10" = "[90-100]"))
 ```
-![](Figures/4_Cell_Down.png)
+<p align="center">
+  <img width = 450 height = 450 src="Figures/4_Cell_Down.png">
+  <br> Figure 7C
+</p>
