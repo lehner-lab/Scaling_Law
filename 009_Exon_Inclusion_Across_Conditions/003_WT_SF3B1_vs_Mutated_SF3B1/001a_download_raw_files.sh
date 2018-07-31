@@ -12,6 +12,9 @@ do
 	prefetch -v $SRR_ID
 done < Data/Sample_IDs.txt
 
+# make a directory to store the fastq files
+mkdir fastq_files
+
 # extract fastq files
 while IFS=$'\t' read -r -a myArray
 do

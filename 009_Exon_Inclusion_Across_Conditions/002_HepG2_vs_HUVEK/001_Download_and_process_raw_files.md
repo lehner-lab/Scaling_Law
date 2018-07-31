@@ -32,6 +32,9 @@ done < Data/Sample_IDs.txt
 The next step involves extracting the fastq files. I extracted them to a folder called `fastq_files` in the current working directory, but feel free to replace this with something else. By default, the files prefetched in the previous step are stored in `~/ncbi/public/sra/`, but if you saved them elsewhere, then this directory should also be changed in the code below:
 
 ```bash
+# make a directory to store the fastq files
+mkdir fastq_files
+
 # extract fastq files
 while IFS=$'\t' read -r -a myArray
 do
