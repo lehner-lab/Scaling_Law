@@ -2,7 +2,8 @@
 
 This document explains the code found in [002\_downstream\_analysis.R](002_downstream_analysis.R), which processes the `Tissues_Compared_Datasets.RData` file generated in the previous step to compare exon inclusion in brain and in skin. All the code in this document is written in R.
 
-## Data processing in R
+
+## 1. Data processing in R
 
 We first load the file:
 
@@ -114,18 +115,17 @@ Exons.Down$Group <- factor(Exons.Down$Group, levels = 1:10)
 ```
 
 
-## Plots
+## 2. Plots
 
-To visualise the effect of changing the tissue on exon inclusion, I used two libraries:
+To visualise the effect of changing the tissue on exon inclusion, I used the ggplot2 library:
 
 ```r
 library(ggplot2)
-library(RColorBrewer)
 ```
 
 I then used the code below to draw boxplots and visualise how the ΔPSI depends on the starting levels of exon inclusion.
 
-### More exon inclusion
+### 2.1. More exon inclusion
 
 To visualise how the increase in exon inclusion depends on the starting PSI:
 
@@ -167,9 +167,7 @@ ggplot(data = Exons.Up,
   <br> Figure 7C
 </p>
 
-
-
-### More exon skipping
+### 2.2. More exon skipping
 
 To visualise how the decrease in exon inclusion depends on the starting PSI:
 
