@@ -1,10 +1,9 @@
 # Downstream Analysis
 
+This document explains the code found in [002\_downstream\_analysis.R](002_downstream_analysis.R), which processes the `SF3B1wt_SF3B1mut_TABLE_EXONS.txt` file generated in the previous step. That file is provided in `Data` folder so feel free to jump straight to this code if you don't want to process the raw files yourself.  All the code written in this document is written in R.
 
 
-This document contains all the R code needed to process the `SF3B1wt_SF3B1mut_TABLE_EXONS.txt` file generated in the previous step. That file is provided in `Data` folder so feel free to jump straight to this code if you don't want to process the raw files. 
-
-## Data processing in R
+## 1. Data processing in R
 
 We first load the file into R:
 
@@ -68,8 +67,8 @@ Samples.Table$Mutated.Minus.WT <- Samples.Table$Mean.Mutated - Samples.Table$Mea
 These two conditions differ in the presence of a wild-type copy of the SF3B1 splicing factor, and so some exons will be more included under WT SF3B1 whereas others will be more included with a mutated version of the protein. To distinguish between those exons that are more included in the presence of a mutated SF3B1 protein and those that are more skipped, I created two sub-tables called `Exons.Down` and `Exons.Up`:
 
 ```r
-Exons.Down <- Samples.Table[which(Samples.Table$Huvek.Minus.HepG2 < 0),] 
-Exons.Up <- Samples.Table[which(Samples.Table$Huvek.Minus.HepG2 > 0),] 
+Exons.Down <- Samples.Table[which(Samples.Table$Mutated.Minus.WT < 0),] 
+Exons.Up <- Samples.Table[which(Samples.Table$Mutated.Minus.WT > 0),] 
 ```
 
 Finally, I assigned each exon skipping event to one of 10 groups, depending on the exon PSI with WT SF3B1 (the 'Starting PSI'):
@@ -89,38 +88,27 @@ Exons.Down$Group <- factor(Exons.Down$Group,
 ```
 
 
+## 2. Plots
 
-
-## Plots
-
-To visualise the effect of changing the cell line on exon inclusion, I used two libraries:
+To visualise the effect of changing the cell line on exon inclusion, I used the ggplot2 library:
 
 ```r
 library(ggplot2)
-library(RColorBrewer)
 ```
 
 I then used the code below to draw boxplots and visualise how the ΔPSI depends on the starting levels of exon inclusion.
 
-### More exon inclusion
+### 2.1. More exon inclusion
 
 To visualise how the increase in exon inclusion depends on the starting PSI:
 
 ```r
-# colour palette for this plot
-myPalette <- colorRampPalette(c("gray95", "firebrick2"))(n = 10)
-
-# plot!
-ggplot(data = Exons.Up, mapping = aes(x = Group,
-                                      y = Mutated.Minus.WT,
-                                      fill = Group)) +
-  geom_boxplot(outlier.shape = NA, notch = T) +
-  geom_jitter(aes(Group,Mutated.Minus.WT),
-              position=position_jitter(width=0.25,
-                                       height=0),
-              alpha=0.1,
-              size=0.5,
-              show.legend=FALSE) +
+ggplot(data = Exons.Up,
+       mapping = aes(x = Group,
+                     y = Mutated.Minus.WT)) +
+  geom_boxplot(outlier.shape = NA,
+               notch = T,
+               fill = "#D66F79") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -133,7 +121,6 @@ ggplot(data = Exons.Up, mapping = aes(x = Group,
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12)) +
   coord_cartesian(ylim = c(0,50)) + 
-  scale_fill_manual(values = c(myPalette[1:10])) +
   ylab(expression(Delta*PSI)) +
   xlab("Starting PSI") +
   scale_x_discrete(labels = c("1" = "[0-10)",
@@ -148,29 +135,22 @@ ggplot(data = Exons.Up, mapping = aes(x = Group,
                               "10" = "[90-100]"))
 ```
 
-![](Figures/SF3B1_Mutations_Up.png)
+<p align="center">
+  <img width = 450 height = 450 src="Figures/SF3B1_Mutations_Up.png">
+  <br> Figure 7C
+</p>
 
-
-### More exon skipping
+### 2.2. More exon skipping
 
 To visualise how the decrease in exon inclusion depends on the starting PSI:
 
 ```r
-# colour palette for this plot
-myPalette <- colorRampPalette(c("gray95", "dodgerblue3"))(n = 10)
-
-# plot!
-ggplot(data = Exons.Down, mapping = aes(x = Group,
-                                        y = Mutated.Minus.WT,
-                                        fill = Group)) +
+ggplot(data = Exons.Down,
+       mapping = aes(x = Group,
+                     y = Mutated.Minus.WT)) +
   geom_boxplot(outlier.shape = NA,
-               notch = T) +
-  geom_jitter(aes(Group,Mutated.Minus.WT),
-              position=position_jitter(width=0.25,
-                                       height=0),
-              alpha=0.1,
-              size=0.5,
-              show.legend=FALSE) +
+               notch = T,
+               fill = "#6EA7D3") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -183,7 +163,6 @@ ggplot(data = Exons.Down, mapping = aes(x = Group,
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12)) +
   coord_cartesian(ylim = c(-50,0)) + 
-  scale_fill_manual(values = c(myPalette[1:10])) +
   ylab(expression(Delta*PSI)) +
   xlab("Starting PSI") +
   scale_x_discrete(labels = c("1" = "[0-10)",
@@ -197,4 +176,7 @@ ggplot(data = Exons.Down, mapping = aes(x = Group,
                               "9" = "[80-90)",
                               "10" = "[90-100]"))
 ```
-![](Figures/SF3B1_Mutations_Down.png)
+<p align="center">
+  <img width = 450 height = 450 src="Figures/SF3B1_Mutations_Down.png">
+  <br> Figure 7C
+</p>
