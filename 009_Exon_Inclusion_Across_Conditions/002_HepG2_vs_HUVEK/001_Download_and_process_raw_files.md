@@ -1,12 +1,17 @@
 # Raw sequencing files
 
-
-To compare exon inclusion in two different cell lines, we chose two cell lines representing different lineages (HepG2 and Huvek) from the [ENCODE Project Common Cell Types](https://www.genome.gov/26524238/encode-project-common-cell-types/). Transcriptomic RNA-seq data from these cell lines is stored in GEO. To run the code written in this document, you'll also need the 
+In this document, I explain the code found in [001a\_download\_raw\_files.sh](001a_download_raw_files.sh) and [001b\_process\_raw\_files.sh](001b_process_raw_files.R). All the code in this document is written in bash. To run the code written in this document, you'll also need the 
 `Samples_ID.txt` file found in the `Data` folder.
 
-## Download files
 
-The easiest way to download GEO data is to use the [SRA toolkit](https://www.ncbi.nlm.nih.gov/sra/docs/toolkitsoft/). First, I built a table linking the GSM IDs I had to the SRA IDs required by the SRA toolkit:
+## 1. Choice of cell lines
+
+To compare exon inclusion in two different cell lines, we chose two cell lines representing different lineages (HepG2 and Huvek) from the [ENCODE Project Common Cell Types](https://www.genome.gov/26524238/encode-project-common-cell-types/).
+
+
+## 2. Download files
+
+Transcriptomic RNA-seq data from these cell lines is stored in GEO. The easiest way to download GEO data is to use the [SRA toolkit](https://www.ncbi.nlm.nih.gov/sra/docs/toolkitsoft/). First, I built a table linking the GSM IDs I had to the SRA IDs required by the SRA toolkit:
 
 ```bash
 # Make SRR-to-GSM table
@@ -46,7 +51,8 @@ do
 done < Data/Sample_IDs.txt
 ```
 
-## Process files with VAST-TOOLS
+
+## 3. Process files with VAST-TOOLS
 
 To process the raw sequencing files and extract genomewide exon inclusion levels (as well as information about other alternative splicing events), I used [VAST-TOOLS](https://github.com/vastgroup/vast-tools). The first step in the VAST-TOOLS pipeline is the alignment. This can take quite a bit of time, which is why I recommend using multiple cores if possible. The second step is `combine` and should be fairly quick.
 
@@ -73,8 +79,7 @@ done < Data/Sample_IDs.txt
 ```
 
 
-
-## Build table to use in downstream analysis
+## 4. Build table to use in downstream analysis
 
 The output of `vast-tools combine` has [many columns](https://github.com/vastgroup/vast-tools#combine-output-format). I removed some of them which I was not interested in, and I also changed the quality scores column. If the quality of an event was `LOW` or better, I set the event as a `Pass`. Otherwise, I called it a `Fail`.
 

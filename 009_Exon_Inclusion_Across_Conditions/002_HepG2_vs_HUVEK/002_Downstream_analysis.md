@@ -1,10 +1,9 @@
 # Downstream Analysis
 
+This document explains the code found in [002\_downstream\_analysis.R](002_downstream_analysis.R), which processes the `Huvec_HepG2_TABLE_EXONS.txt` file generated in the previous step. That file is provided in `Data` folder so feel free to jump straight to this code if you don't want to process the raw files yourself. All the code written in this file is written in R.
 
 
-This document contains all the R code needed to process the `Huvec_HepG2_TABLE_EXONS.txt` file generated in the previous step. That file is provided in `Data` folder so feel free to jump straight to this code if you don't want to process the raw files. 
-
-## Data processing in R
+## 1. Data processing in R
 
 We first load the file into R:
 
@@ -89,38 +88,28 @@ Exons.Down$Group <- factor(Exons.Down$Group,
 ```
 
 
+## 2. Plots
 
-
-## Plots
-
-To visualise the effect of changing the cell line on exon inclusion, I used two libraries:
+To visualise the effect of changing the cell line on exon inclusion, I used the ggplot2 library:
 
 ```r
 library(ggplot2)
-library(RColorBrewer)
 ```
 
 I then used the code below to draw boxplots and visualise how the ΔPSI depends on the starting levels of exon inclusion.
 
-### More exon inclusion
+### 2.1. More exon inclusion
 
 To visualise how the increase in exon inclusion depends on the starting PSI:
 
 ```r
-# colour palette for this plot
-myPalette <- colorRampPalette(c("gray95", "firebrick2"))(n = 10)
 
 # plot!
 ggplot(data = Exons.Up, mapping = aes(x = Group,
-                                      y = Huvek.Minus.HepG2,
-                                      fill = Group)) +
-  geom_boxplot(outlier.shape = NA, notch = T) +
-  geom_jitter(aes(Group,Huvek.Minus.HepG2),
-              position=position_jitter(width=0.25,
-                                       height=0),
-              alpha=0.1,
-              size=0.5,
-              show.legend=FALSE) +
+                                      y = Huvek.Minus.HepG2)) +
+  geom_boxplot(outlier.shape = NA,
+               notch = T,
+               fill = "#D66F79") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -133,7 +122,6 @@ ggplot(data = Exons.Up, mapping = aes(x = Group,
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12)) +
   coord_cartesian(ylim = c(0,100)) + 
-  scale_fill_manual(values = c(myPalette[1:10])) +
   ylab(expression(Delta*PSI)) +
   xlab("Starting PSI") +
   scale_x_discrete(labels = c("1" = "[0-10)",
@@ -146,31 +134,25 @@ ggplot(data = Exons.Up, mapping = aes(x = Group,
                               "8" = "[70-80)",
                               "9" = "[80-90)",
                               "10" = "[90-100]"))
+
 ```
+<p align="center">
+  <img width = 450 height = 450 src="Figures/HepG2_Huvek_Up.png">
+  <br> Figure 7C
+</p>
 
-![](Figures/HepG2_Huvek_Up.png)
-
-
-### More exon skipping
+### 2.2. More exon skipping
 
 To visualise how the decrease in exon inclusion depends on the starting PSI:
 
 ```r
-# colour palette for this plot
-myPalette <- colorRampPalette(c("gray95", "dodgerblue3"))(n = 10)
-
 # plot!
-ggplot(data = Exons.Down, mapping = aes(x = Group,
-                                        y = Huvek.Minus.HepG2,
-                                        fill = Group)) +
+ggplot(data = Exons.Down,
+       mapping = aes(x = Group,
+                     y = Huvek.Minus.HepG2)) +
   geom_boxplot(outlier.shape = NA,
-               notch = T) +
-  geom_jitter(aes(Group,Huvek.Minus.HepG2),
-              position=position_jitter(width=0.25,
-                                       height=0),
-              alpha=0.1,
-              size=0.5,
-              show.legend=FALSE) +
+               notch = T,
+               fill = "#6EA7D3") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -183,7 +165,6 @@ ggplot(data = Exons.Down, mapping = aes(x = Group,
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12)) +
   coord_cartesian(ylim = c(-100,0)) + 
-  scale_fill_manual(values = c(myPalette[1:10])) +
   ylab(expression(Delta*PSI)) +
   xlab("Starting PSI") +
   scale_x_discrete(labels = c("1" = "[0-10)",
@@ -197,4 +178,7 @@ ggplot(data = Exons.Down, mapping = aes(x = Group,
                               "9" = "[80-90)",
                               "10" = "[90-100]"))
 ```
-![](Figures/HepG2_Huvek_Down.png)
+<p align="center">
+  <img width = 450 height = 450 src="Figures/HepG2_Huvek_Down.png">
+  <br> Figure 7C
+</p>
