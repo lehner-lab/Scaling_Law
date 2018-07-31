@@ -1,7 +1,7 @@
 # Raw sequencing files
 
 
-In this document, I explain the code found in [001a\_download\_raw\_files.sh](001a_download_raw_files.sh) and [001b\_process\_raw\_files.sh](001b_process_raw_files.R). All the code in this document is written in bash. To run the code written in this document, you'll also need the 
+In this document, I explain the code found in [001a\_download\_raw\_files.sh](001a_download_raw_files.sh) and [001b\_process\_raw\_files.sh](001b_process_raw_files.sh). All the code in this document is written in bash. To run the code written in this document, you'll also need the 
 `Samples_ID.txt` file found in the `Data` folder.
 
 
