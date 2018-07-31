@@ -1,5 +1,25 @@
 #!/bin/bash
 
+# run vast-tools
+while IFS=$'\t' read -r -a myArray
+do
+	# make a directory for each sample and go inside
+	mkdir ${myArray[1]}
+	cd ${myArray[1]}
+	
+	# store the path to the fastq files we want to process
+	FILE1=../fastq_files/${myArray[1]}_1.fastq
+	FILE2=../fastq_files/${myArray[1]}_2.fastq
+	
+	# run vast-tools align
+	vast-tools align $FILE1 $FILE2 --sp Hsa -c 10   # using 10 cores
+	# run vast-tools combine
+	vast-tools combine -o vast_out -sp Hsa
+	
+	# move back up before creating a directory for the next sample
+	cd ..
+done < Data/Sample_IDs.txt
+
 # for each sample, remove columns I don't want AND say whether quality is overall good ('Pass') or bad ('Fail')
 for i in `seq 1 4`; do
 	# save sample name as a variable
