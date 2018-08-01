@@ -108,7 +108,7 @@ Data.Frame.QTL.ID <- rep(as.character(Genotypes$ID),
 
 ## 2. Gather information
 
-Now that we're done with the preparatory work, we will collect all the p values calculated in []() and put them together in one large data table. Note that we'll only proceed if there is an `sQTL.RData` file for this splicing event. In most cases there will be, but if it wasn't produced (eg. if there weren't any potential sQTLs within the same gene as the exon of interest) we won't be considering this splicing event any further:
+Now that we're done with the preparatory work, we will collect all the p values calculated in [006a\_test\_all\_sqtl\_candidates.md](006a_test_all_sqtl_candidates.md) and put them together in one large data table. Note that we'll only proceed if there is an `sQTL.RData` file for this splicing event. In most cases there will be, but if it wasn't produced (eg. if there weren't any potential sQTLs within the same gene as the exon of interest) we won't be considering this splicing event any further:
 
 ```r
 # make sure the sQTL.RData exists; otherwise stop
