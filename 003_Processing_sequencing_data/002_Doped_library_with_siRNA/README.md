@@ -58,11 +58,3 @@ This step produces a text file with a table like this, showing the number of tim
 | GATCCAGATCTAACTTGGGGTGGCTTTGTCTTCTTCTTTTGCCAATTCCACTAATTGTTTGAG | 49143       | 1             |
 | GATCCAGATCTAACTTGGGGTGGCTTTGTCTTCTTCTTTTGCCAAGTCCACTAATTGTTTGGG | 48854       | 1             |
 
-
-## 5. Remove sequencing errors
-
-Genotypes containing a mutation not included in the original library design (which allows for a maximum of 3072 different genotypes) was considered a sequencing error. We filtered these sequencing errors with the code in `005_remove_sequencing_errors`:
-
-```bash
-bash 005_remove_sequencing_errors
-``` 
