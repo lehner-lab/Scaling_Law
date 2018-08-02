@@ -55,7 +55,7 @@ if (( $number_of_lines > 0 )); then
 	for i in $line_numbers; do
 		
 		# get sQTL ID
-		sQTL_id=$(head -n $i ../Data/011_ALT_Significant_Splicing_Events_sQTLs_Combos.txt | tail -n 1 | cut -f 2)
+		sQTL_id=$(head -n $i ../../Data/007_Significant_Splicing_Events_sQTLs_Combos.txt | tail -n 1 | cut -f 2)
 		
 		# run the R script
 		Rscript ../../008b_sQTL_effects_per_tissue.R $sQTL_id
@@ -103,7 +103,7 @@ if (( $number_of_lines > 0 )); then
 	for i in $line_numbers; do
 		
 		# get sQTL ID
-		sQTL_id=$(head -n $i ../Data/011_ALT_Significant_Splicing_Events_sQTLs_Combos.txt | tail -n 1 | cut -f 2)
+		sQTL_id=$(head -n $i ../../Data/007_Significant_Splicing_Events_sQTLs_Combos.txt | tail -n 1 | cut -f 2)
 		
 		# run the R script
 		Rscript ../../008b_sQTL_effects_per_tissue.R $sQTL_id
