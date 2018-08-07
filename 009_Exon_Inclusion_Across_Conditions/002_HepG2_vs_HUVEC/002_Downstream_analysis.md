@@ -13,7 +13,7 @@ Samples.Table <- read.table(file = "Data/Huvec_HepG2_TABLE_EXONS.txt",
                             header = TRUE)
 ```
 
-For all exon skipping events in each of the two conditions to be compared (HepG2 cell line vs HUVEK cell line), I took the average PSI across all samples whose quality scores were labelled as `Pass`. If there were none, the average PSI set to `NA`.
+For all exon skipping events in each of the two conditions to be compared (HepG2 cell line vs Huvec cell line), I took the average PSI across all samples whose quality scores were labelled as `Pass`. If there were none, the average PSI set to `NA`.
 
 ```r
 # Calculate the mean PSI for all exon skipping events in HepG2
@@ -36,8 +36,8 @@ Samples.Table$Mean.HepG2 <- apply(X = Samples.Table[,grep("^HepG2",
                                     mean.psi
                                   })
 
-# Calculate the mean PSI for all exon skipping events in HUVEK
-Samples.Table$Mean.Huvek <- apply(X = Samples.Table[,grep("^Huvec",
+# Calculate the mean PSI for all exon skipping events in Huvec
+Samples.Table$Mean.Huvec <- apply(X = Samples.Table[,grep("^Huvec",
                                                           colnames(Samples.Table),
                                                           perl = T)],
                                   MARGIN = 1,
@@ -58,17 +58,17 @@ Samples.Table$Mean.Huvek <- apply(X = Samples.Table[,grep("^Huvec",
                                   })
 ```
 
-To calculate the effect of changing the cell line (from HepG2, the 'Starting PSI' condition, to HUVEK, the 'final PSI' condition) on exon inclusion, I subtracted the mean PSI value in HepG2 from the mean PSI value in HUVEK:
+To calculate the effect of changing the cell line (from HepG2, the 'Starting PSI' condition, to Huvec, the 'final PSI' condition) on exon inclusion, I subtracted the mean PSI value in HepG2 from the mean PSI value in Huvec:
 
 ```r
-Samples.Table$Huvek.Minus.HepG2 <- Samples.Table$Mean.Huvek - Samples.Table$Mean.HepG2
+Samples.Table$Huvec.Minus.HepG2 <- Samples.Table$Mean.Huvec - Samples.Table$Mean.HepG2
 ```
 
-There are many differences between these two cell lines, and so some exons will be more included in HepG2 and some will be more included in HUVEK. To distinguish between those exons that are more included when introduced in HUVEK and those that are more skipped, I created two sub-tables called `Exons.Down` and `Exons.Up`:
+There are many differences between these two cell lines, and so some exons will be more included in HepG2 and some will be more included in Huvec. To distinguish between those exons that are more included when introduced in Huvec and those that are more skipped, I created two sub-tables called `Exons.Down` and `Exons.Up`:
 
 ```r
-Exons.Down <- Samples.Table[which(Samples.Table$Huvek.Minus.HepG2 < 0),] 
-Exons.Up <- Samples.Table[which(Samples.Table$Huvek.Minus.HepG2 > 0),] 
+Exons.Down <- Samples.Table[which(Samples.Table$Huvec.Minus.HepG2 < 0),] 
+Exons.Up <- Samples.Table[which(Samples.Table$Huvec.Minus.HepG2 > 0),] 
 ```
 
 Finally, I assigned each exon skipping event to one of 10 groups, depending on the exon PSI in HepG2 (the 'Starting PSI'):
@@ -106,7 +106,7 @@ To visualise how the increase in exon inclusion depends on the starting PSI:
 
 # plot!
 ggplot(data = Exons.Up, mapping = aes(x = Group,
-                                      y = Huvek.Minus.HepG2)) +
+                                      y = Huvec.Minus.HepG2)) +
   geom_boxplot(outlier.shape = NA,
                notch = T,
                fill = "#D66F79") +
@@ -137,7 +137,7 @@ ggplot(data = Exons.Up, mapping = aes(x = Group,
 
 ```
 <p align="center">
-  <img width = 450 height = 450 src="Figures/HepG2_Huvek_Up.png">
+  <img width = 450 height = 450 src="Figures/HepG2_Huvec_Up.png">
   <br> Figure 7C
 </p>
 
@@ -149,7 +149,7 @@ To visualise how the decrease in exon inclusion depends on the starting PSI:
 # plot!
 ggplot(data = Exons.Down,
        mapping = aes(x = Group,
-                     y = Huvek.Minus.HepG2)) +
+                     y = Huvec.Minus.HepG2)) +
   geom_boxplot(outlier.shape = NA,
                notch = T,
                fill = "#6EA7D3") +
@@ -179,6 +179,6 @@ ggplot(data = Exons.Down,
                               "10" = "[90-100]"))
 ```
 <p align="center">
-  <img width = 450 height = 450 src="Figures/HepG2_Huvek_Down.png">
+  <img width = 450 height = 450 src="Figures/HepG2_Huvec_Down.png">
   <br> Figure 7C
 </p>

@@ -28,8 +28,8 @@ Samples.Table$Mean.HepG2 <- apply(X = Samples.Table[,grep("^HepG2",
                                     mean.psi
                                   })
 
-# Calculate the mean PSI for all exon skipping events in HUVEK
-Samples.Table$Mean.Huvek <- apply(X = Samples.Table[,grep("^Huvec",
+# Calculate the mean PSI for all exon skipping events in Huvec
+Samples.Table$Mean.Huvec <- apply(X = Samples.Table[,grep("^Huvec",
                                                           colnames(Samples.Table),
                                                           perl = T)],
                                   MARGIN = 1,
@@ -50,11 +50,11 @@ Samples.Table$Mean.Huvek <- apply(X = Samples.Table[,grep("^Huvec",
                                   })
 
 # delta PSI column
-Samples.Table$Huvek.Minus.HepG2 <- Samples.Table$Mean.Huvek - Samples.Table$Mean.HepG2
+Samples.Table$Huvec.Minus.HepG2 <- Samples.Table$Mean.Huvec - Samples.Table$Mean.HepG2
 
 # filter for exons whose PSI goes up or down
-Exons.Down <- Samples.Table[which(Samples.Table$Huvek.Minus.HepG2 < 0),] 
-Exons.Up <- Samples.Table[which(Samples.Table$Huvek.Minus.HepG2 > 0),] 
+Exons.Down <- Samples.Table[which(Samples.Table$Huvec.Minus.HepG2 < 0),] 
+Exons.Up <- Samples.Table[which(Samples.Table$Huvec.Minus.HepG2 > 0),] 
 
 # group according to the starting PSI
 Exons.Up$Group <- findInterval(x = Exons.Up$Mean.HepG2,
@@ -86,11 +86,11 @@ library(ggplot2)
 
 ggplot(data = Exons.Up,
        mapping = aes(x = Group,
-                     y = Huvek.Minus.HepG2)) +
+                     y = Huvec.Minus.HepG2)) +
   geom_boxplot(outlier.shape = NA,
                notch = T,
                fill = "#D66F79") +
-  # geom_jitter(aes(Group,Huvek.Minus.HepG2),
+  # geom_jitter(aes(Group,Huvec.Minus.HepG2),
   #             position=position_jitter(width=0.25,
   #                                      height=0),
   #             alpha=0.1,
@@ -132,11 +132,11 @@ ggplot(data = Exons.Up,
 
 ggplot(data = Exons.Down,
        mapping = aes(x = Group,
-                     y = Huvek.Minus.HepG2)) +
+                     y = Huvec.Minus.HepG2)) +
   geom_boxplot(outlier.shape = NA,
                notch = T,
                fill = "#6EA7D3") +
-  # geom_jitter(aes(Group,Huvek.Minus.HepG2),
+  # geom_jitter(aes(Group,Huvec.Minus.HepG2),
   #             position=position_jitter(width=0.25,
   #                                      height=0),
   #             alpha=0.1,
