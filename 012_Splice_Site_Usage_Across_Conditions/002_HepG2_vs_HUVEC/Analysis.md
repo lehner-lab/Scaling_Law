@@ -32,7 +32,7 @@ Samples.Table <- read.table(file = "Data/Huvec_HepG2_TABLE_ALTD.txt",
                             header = TRUE)
 ```
 
-For all alternative 5' splice site events in each of the two conditions to be compared (HepG2 cell line vs Huvec cell line), I took the average PSU (percent splice site usage) across all samples whose quality scores were labelled as `Pass`. If there were none, the average PSI set to `NA`.
+For all alternative 5' splice site events in each of the two conditions to be compared (HepG2 cell line vs Huvec cell line), I took the average PSU (percent splice site usage) across all samples whose quality scores were labelled as `Pass`. If there were none, the average PSU set to `NA`.
 
 ```r
 # Calculate the mean PSU for all alternative splice site events in HepG2
