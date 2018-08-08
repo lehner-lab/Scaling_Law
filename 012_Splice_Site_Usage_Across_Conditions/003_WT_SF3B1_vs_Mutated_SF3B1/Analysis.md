@@ -134,7 +134,7 @@ ggplot(data = PSU.Up, mapping = aes(x = Group,
         axis.text.y = element_text(size = 10),
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12)) +
-  coord_cartesian(ylim = c(0,100)) + 
+  coord_cartesian(ylim = c(0,50)) + 
   ylab(expression(Delta*PSU)) +
   xlab("Starting PSI") +
   scale_x_discrete(labels = c("1" = "[0-10)",
@@ -176,7 +176,7 @@ ggplot(data = PSU.Down,
         axis.text.y = element_text(size = 10),
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12)) +
-  coord_cartesian(ylim = c(-100,0)) + 
+  coord_cartesian(ylim = c(-50,0)) + 
   ylab(expression(Delta*PSU)) +
   xlab("Starting PSI") +
   scale_x_discrete(labels = c("1" = "[0-10)",
