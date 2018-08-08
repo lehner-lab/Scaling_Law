@@ -395,6 +395,9 @@ residualsPlot(Pred = Predictions, Residuals = PSIs.For.New.Data - Predictions)
 
 
 
+# error in our predictions
+Errors <- PSIs.For.New.Data - Predictions
+rmse(Errors)
 
 
 
