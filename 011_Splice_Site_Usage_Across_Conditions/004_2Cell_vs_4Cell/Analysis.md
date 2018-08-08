@@ -6,7 +6,7 @@ In this document I describe the code found in [build\_tables.sh](build_tables.sh
 
 **The code in this section is written in bash.**
 
-We will first generate a table equivalent to [2C\_4C\_TABLE\_EXONS.txt](../../009_Exon_Inclusion_Across_Conditions/004_2Cell_vs_4Cell/Data/2C_4C_TABLE_EXONS.txt) (built in section [009\_Exon\_Inclusion\_Across\_Conditions](../../009_Exon_Inclusion_Across_Conditions)), but containing information about 5' and 3' splice sites throughout the genome. To run the following code, you will need the file named [SF3B1wt\_SF3B1mut\_TABLE.txt](../../009_Exon_Inclusion_Across_Conditions/004_2Cell_vs_4Cell/Data/2C_4C_TABLE.txt) that was built in that section.
+We will first generate a table equivalent to [2C\_4C\_TABLE\_EXONS.txt](../../008_Exon_Inclusion_Across_Conditions/004_2Cell_vs_4Cell/Data/2C_4C_TABLE_EXONS.txt) (built in section [008\_Exon\_Inclusion\_Across\_Conditions](../../008_Exon_Inclusion_Across_Conditions)), but containing information about 5' and 3' splice sites throughout the genome. To run the following code, you will need the file named [SF3B1wt\_SF3B1mut\_TABLE.txt](../../008_Exon_Inclusion_Across_Conditions/004_2Cell_vs_4Cell/Data/2C_4C_TABLE.txt) that was built in that section.
 
 ```bash
 # alternative 5' splice sites
