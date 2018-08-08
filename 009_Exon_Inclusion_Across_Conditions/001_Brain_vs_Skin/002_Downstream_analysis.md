@@ -38,12 +38,12 @@ Need to figure out the IDs of all brain or skin samples:
 
 ```r
 # which row numbers refer to a sample in brain or skin?
-Brain.Indices <- which(GTEX.Annotations$SMTS == "Brain")
-Skin.Indices <- which(GTEX.Annotations$SMTS == "Skin")
+Brain.Indices <- which(GTEX.Annotations$Tissue == "Brain")
+Skin.Indices <- which(GTEX.Annotations$Tissue == "Skin")
 
 # use those row numbers as indices to extract relevant IDs
-Brain.Sample.IDs <- as.character(GTEX.Annotations$SAMPID)[Brain.Indices]
-Skin.Sample.IDs <- as.character(GTEX.Annotations$SAMPID)[Skin.Indices]
+Brain.Sample.IDs <- as.character(GTEX.Annotations$ID)[Brain.Indices]
+Skin.Sample.IDs <- as.character(GTEX.Annotations$ID)[Skin.Indices]
 ```
 After taking the IDs I wanted to work with, I used them to subset `PSI.Estimates` and create two small data frames (one for each of the 2 tissues I want to compare):
 
