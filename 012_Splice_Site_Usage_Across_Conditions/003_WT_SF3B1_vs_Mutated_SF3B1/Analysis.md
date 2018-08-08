@@ -76,7 +76,7 @@ Samples.Table$Mean.Mutated <- apply(X = Samples.Table[,grep("^SF3B1_mutated",
                                       mean.psi
                                     })
 ```
-To calculate the effect of mutating SF3B1 on splice site usage, I subtracted the mean PSU value under WT SF3B1 (the 'starting PSI') from the mean PSU value in the presence of a mutated SF3B1 (the 'final PSI'):
+To calculate the effect of mutating SF3B1 on splice site usage, I subtracted the mean PSU value under WT SF3B1 (the 'starting PSU') from the mean PSU value in the presence of a mutated SF3B1 (the 'final PSU'):
 
 ```r
 Samples.Table$Mutated.Minus.WT <- Samples.Table$Mean.Mutated - Samples.Table$Mean.WT
