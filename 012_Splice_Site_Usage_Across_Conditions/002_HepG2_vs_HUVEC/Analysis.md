@@ -89,7 +89,7 @@ PSU.Down <- Samples.Table[which(Samples.Table$Huvec.Minus.HepG2 < 0),]
 PSU.Up <- Samples.Table[which(Samples.Table$Huvec.Minus.HepG2 > 0),] 
 ```
 
-Finally, I assigned each exon skipping event to one of 10 groups, depending on the exon PSI in HepG2 (the 'Starting PSI'):
+Finally, I assigned each exon skipping event to one of 10 groups, depending on the splice site PSU in HepG2 (the 'Starting PSI'):
 
 ```r
 PSU.Up$Group <- findInterval(x = PSU.Up$Mean.HepG2,
@@ -104,7 +104,7 @@ PSU.Down$Group <- findInterval(x = PSU.Down$Mean.HepG2,
 PSU.Down$Group <- factor(PSU.Down$Group,
                          levels = 1:10)
 ```
-To visualise the effect of changing the cell line on exon inclusion, I used the ggplot2 library:
+To visualise the effect of changing the cell line on splice site usage, I used the ggplot2 library:
 
 ```r
 library(ggplot2)
