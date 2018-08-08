@@ -90,7 +90,7 @@ Exons.Down$Group <- factor(Exons.Down$Group,
 
 ## 2. Plots
 
-To visualise the effect of changing the cell line on exon inclusion, I used the ggplot2 library:
+To visualise the effect of SF3B1 mutations on exon inclusion, I used the ggplot2 library:
 
 ```r
 library(ggplot2)
