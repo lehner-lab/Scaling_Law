@@ -320,11 +320,11 @@ rmse(Errors)
 ```
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_03.png">
-  <br> Figure ???
+  <br> Figure S2B
 </p>
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_04.png">
-  <br> Figure ???
+  <br> Figure S2B
 </p>
 
 -----
@@ -358,11 +358,11 @@ rmse(Errors)
 ```
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_05.png">
-  <br> Figure ???
+  <br> Figure S2C
 </p>
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_06.png">
-  <br> Figure ???
+  <br> Figure S2C
 </p>
 
 Or forcing predictions to be between 0 and 100:
@@ -382,11 +382,11 @@ rmse(Errors)
 ```
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_07.png">
-  <br> Figure ???
+  <br> Figure S2D
 </p>
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_08.png">
-  <br> Figure ???
+  <br> Figure S2D
 </p>
 
 
@@ -591,11 +591,11 @@ Ten.Fold.CV(Model.Dataframe = Model.DF[Rows.To.Keep,],
 ```
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_11.png">
-  <br> Figure ??
+  <br> Figure S2E
 </p>
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_12.png">
-  <br> Figure ??
+  <br> Figure S2E
 </p>
 
 And without filtering by the standard deviation:
@@ -629,11 +629,11 @@ Ten.Fold.CV(Model.Dataframe = Model.DF[Rows.To.Keep,],
 ```
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_13.png">
-  <br> Figure S2D
+  <br> Figure S2F
 </p>
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_14.png">
-  <br> Figure S2E
+  <br> Figure S2F
 </p>
 
 We can also set hard limits on the model predictions:
@@ -658,11 +658,11 @@ Ten.Fold.CV(Model.Dataframe = Model.DF[Rows.To.Keep,],
 
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_15.png">
-  <br> Figure ???
+  <br> Figure S2G
 </p>
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_16.png">
-  <br> Figure ???
+  <br> Figure S2G
 </p>
 
 
@@ -703,11 +703,11 @@ Ten.Fold.CV(Model.Dataframe = Model.DF[Rows.To.Keep,],
 ```
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_17.png">
-  <br> Figure ???
+  <br> Figure 6A
 </p>
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_18.png">
-  <br> Figure ???
+  <br> Figure 6B
 </p>
 
 With hard-bounds on the predictions:
@@ -731,11 +731,11 @@ Ten.Fold.CV(Model.Dataframe = Model.DF[Rows.To.Keep,],
 ```
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_19.png">
-  <br> Figure ???
+  <br> Figure S2H
 </p>
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_20.png">
-  <br> Figure ???
+  <br> Figure S2H
 </p>
 
 And, the same analysis without filtering by the standard deviation:
@@ -770,11 +770,11 @@ Ten.Fold.CV(Model.Dataframe = Model.DF[Rows.To.Keep,],
 ```
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_21.png">
-  <br> Figure ???
+  <br> Figure S2I
 </p>
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_22.png">
-  <br> Figure ???
+  <br> Figure S2I
 </p>
 
 And with hard bounds on the predictions:
@@ -798,11 +798,11 @@ Ten.Fold.CV(Model.Dataframe = Model.DF[Rows.To.Keep,],
 ```
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_23.png">
-  <br> Figure ???
+  <br> (not in the article)
 </p>
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_24.png">
-  <br> Figure ???
+  <br> (not in the article)
 </p>
 
 
@@ -876,11 +876,11 @@ Ten.Fold.CV(Model.Dataframe = Model.DF[Rows.To.Keep,],
 ```
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_25.png">
-  <br> Figure ???
+  <br> Figure 4E
 </p>
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_26.png">
-  <br> Figure ???
+  <br> Figure 4E
 </p>
 
 As you can see from the plots, this model implicitly forces all predictions to lie between 0 and 100. We can repeat the analysis without filtering by the standard deviation:
@@ -920,11 +920,11 @@ Ten.Fold.CV(Model.Dataframe = Model.DF[Rows.To.Keep,],
 ```
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_27.png">
-  <br> Figure ???
+  <br> Figure S5D
 </p>
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_28.png">
-  <br> Figure ???
+  <br> Figure S5D
 </p>
 
 ## 5. Non-independent non-linear effects (global scaling + interactions)
@@ -965,11 +965,11 @@ Ten.Fold.CV(Model.Dataframe = Model.DF[Rows.To.Keep,],
 ```
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_29.png">
-  <br> Figure ???
+  <br> Figure 6A
 </p>
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_30.png">
-  <br> Figure ???
+  <br> Figure 6B
 </p>
 
 And without filtering by standard deviation:
@@ -1008,14 +1008,13 @@ Ten.Fold.CV(Model.Dataframe = Model.DF[Rows.To.Keep,],
 ```
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_31.png">
-  <br> Figure ???
+  <br> Figure S2J
 </p>
 <p align="center">
   <img width = 450 height = 450 src="Figures/007_plot_32.png">
-  <br> Figure ???
+  <br> Figure S2J
 </p>
 
-## 6. Lasso model
 
 
 
