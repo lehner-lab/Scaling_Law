@@ -4,7 +4,9 @@ Hi, welcome to the GitHub repository for the manuscript titled **_Combinatorial 
 
 
 <p align="center">
-  <img width = 500 height = 500 src="Graphical_Abstract.png" border = 1>
+  <kbd>
+    <img width = 500 height = 500 src="Graphical_Abstract.png">
+  </kbd>
 </p>
 
 
