@@ -11,10 +11,10 @@ We will first generate a table equivalent to [Huvec\_HepG2\_TABLE\_EXONS.txt](..
 
 ```bash
 # alternative 5' splice sites
-awk 'NR==1 {print}; $2 ~ /^HsaALTD / {print $0}' Huvec_HepG2_TABLE.txt >> Data/Huvec_HepG2_TABLE_ALTD.txt
+awk 'NR==1 {print}; $2 ~ /^HsaALTD/ {print $0}' Huvec_HepG2_TABLE.txt >> Data/Huvec_HepG2_TABLE_ALTD.txt
 
 # alternative 3' splice sites
-awk 'NR==1 {print}; $2 ~ /^HsaALTA / {print $0}' Huvec_HepG2_TABLE.txt >> Data/Huvec_HepG2_TABLE_ALTA.txt
+awk 'NR==1 {print}; $2 ~ /^HsaALTA/ {print $0}' Huvec_HepG2_TABLE.txt >> Data/Huvec_HepG2_TABLE_ALTA.txt
 ```
 
 These tables are provided in the `Data/` subdirectory in the current folder. With these tables ready, we can now run R scripts that will generate the boxplots from Figures 7H and S7B.
